@@ -3,7 +3,7 @@
 
 namespace veil {
 
-static void initializeGlfw() {
+static void initGlfw() {
 
     static bool isInitialized = false;
     if (!isInitialized) {
@@ -15,15 +15,19 @@ static void initializeGlfw() {
 
 Window::Window(const std::string& title, int width, int height) {
 
-    initializeGlfw();
+    m_loopFunc = nullptr;
+
+    initGlfw();
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     m_window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
-    if (!m_window) 
+    if (!m_window) {
+        glfwTerminate();
         throw std::runtime_error("VEIL::GLFW::CRITICAL Failed to create GLFW window");
+    }
 
     glfwMakeContextCurrent(m_window);
     
@@ -38,6 +42,7 @@ Window::~Window() {
         glfwDestroyWindow(m_window);
         m_window = nullptr;
     }
+    glfwTerminate();
 }
 
 bool Window::shouldClose() const {
@@ -48,6 +53,22 @@ void Window::pollEvents() const {
 }
 void Window::swapBuffers() const {
     glfwSwapBuffers(m_window);
+}
+
+void Window::setUpdateCallback(std::function<void()> loopFunc) {
+    m_loopFunc = loopFunc;
+}
+void Window::startUpdateLoop() const {
+
+    if (!m_loopFunc)
+        return;
+    
+    while (!this->shouldClose()) {
+
+        this->pollEvents();
+        m_loopFunc();
+        this->swapBuffers();
+    }
 }
 
 void Window::getSize(int& width, int& height) const {
