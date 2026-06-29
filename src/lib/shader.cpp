@@ -30,10 +30,10 @@ Shader::Shader(std::span<const std::string> files, std::span<const GLenum> types
     try {
         std::vector<std::string> sources;
         sources.reserve(files.size());
-        for (auto& file : files)
+        for (const auto& file : files)
             sources.push_back(readFile(file));
 
-        for (size_t i : std::views::iota(0u, files.size())) {
+        for (size_t i = 0; i < files.size(); ++i) {
 
             GLuint shader = glCreateShader(types[i]);
             shaderIDs.push_back(shader);
@@ -67,7 +67,8 @@ Shader::Shader(std::span<const std::string> files, std::span<const GLenum> types
         }
     }
     catch(...) {
-        for (auto& shader : shaderIDs)  {
+        for (const auto& shader : shaderIDs)  {
+
             glDetachShader(m_shaderProgram, shader);
             glDeleteShader(shader);
         }
@@ -75,7 +76,8 @@ Shader::Shader(std::span<const std::string> files, std::span<const GLenum> types
         throw;
     }
 
-    for (auto& shader : shaderIDs) {
+    for (const auto& shader : shaderIDs) {
+
         glDetachShader(m_shaderProgram, shader);
         glDeleteShader(shader);
     }

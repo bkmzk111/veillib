@@ -8,9 +8,7 @@
 #include <string>
 #include <span>
 #include <fstream>
-#include <ranges>
 #include <vector>
-#include <array>
 
 #include <glad/glad.h>
 
