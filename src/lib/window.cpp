@@ -1,26 +1,17 @@
 
-#include <lib.hpp>
+#include <veil/window.hpp>
 
 namespace veil {
-
-static void initGlfw() {
-
-    static bool isInitialized = false;
-    if (!isInitialized) {
-        if (!glfwInit())
-            throw std::runtime_error("VEIL::GLFW::CRITICAL Failed to initialize GLFW");
-        isInitialized = true;
-    }
-}
 
 Window::Window(const std::string& title, int width, int height) {
 
     m_loopFunc = nullptr;
 
-    initGlfw();
+    if (!glfwInit())
+        throw std::runtime_error("VEIL::GLFW::CRITICAL Failed to initialize GLFW");
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     m_window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
@@ -30,10 +21,11 @@ Window::Window(const std::string& title, int width, int height) {
     }
 
     glfwMakeContextCurrent(m_window);
+    VEIL_INIT_OPENGL_DRV // WIN32 glad needs this macro to run explicitely in the .dll code
+                         // or else, glad function pointers will be 0x0
     
     glfwSwapInterval(1);
     glfwSetWindowUserPointer(m_window, this);
-
     glfwSetFramebufferSizeCallback(m_window, Window::framebufferSizeCallback);
 }
 Window::~Window() {

@@ -13,10 +13,10 @@
 
 namespace veil {
 
-#define VEIL_INIT_OPENGL_DRV() \
-if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) { \
-    throw std::runtime_error("VEIL::GLAD::CRITICAL Failed to initialize GLAD"); \
-}
+#define VEIL_INIT_OPENGL_DRV \
+    if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) { \
+        throw std::runtime_error("VEIL::GLAD::CRITICAL Failed to initialize GLAD"); \
+    }
 
 class VEIL_EXPORT Window {
     public:

@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.31)
 #set...
 set(CMAKE_TOOLCHAIN_FILE "d:/VS/Product/VC/vcpkg/scripts/buildsystems/vcpkg.cmake")
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -20,7 +21,8 @@ find_package(glfw3 CONFIG REQUIRED)
 
 #add_executable...
 add_library(veil SHARED
-    src/lib/lib.cpp
+    src/lib/window.cpp
+    src/lib/shader.cpp
 )
 
 add_executable(main WIN32 
