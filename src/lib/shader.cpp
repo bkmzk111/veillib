@@ -5,7 +5,7 @@ namespace veil {
 
 static std::string readFile(const std::string& filename) {
 
-    std::ifstream file(filename);
+    std::ifstream file(filename, std::ios::in | std::ios::binary);
 
     if (!file.is_open())
         throw std::runtime_error("VEIL::OPENGL::SHADER::CRITICAL Failed to read file: " + filename);
@@ -26,6 +26,7 @@ Shader::Shader(std::span<const std::string> files, std::span<const GLenum> types
     m_shaderProgram = glCreateProgram();
 
     std::vector<GLuint> shaderIDs;
+    shaderIDs.reserve(files.size());
 
     try {
         std::vector<std::string> sources;
@@ -82,7 +83,6 @@ Shader::Shader(std::span<const std::string> files, std::span<const GLenum> types
         glDeleteShader(shader);
     }
 }
-
 Shader::~Shader() {
     glDeleteProgram(m_shaderProgram);
 }
@@ -90,9 +90,22 @@ Shader::~Shader() {
 void Shader::useProgram() const {
     glUseProgram(m_shaderProgram);
 }
-
 GLuint Shader::getID() const {
     return m_shaderProgram;
+}
+
+void Shader::setUniform(int location, float x, float y, float z) {
+    uniformVector3f(location, x, y, z);
+}
+void Shader::setUniform(int location, glm::mat4 mat) {
+    uniformMatrix4f(location, mat);
+}
+
+void Shader::uniformVector3f(int location, float x, float y, float z) {
+    glProgramUniform3f(m_shaderProgram, location, x, y, z);
+}
+void Shader::uniformMatrix4f(int location, glm::mat4 mat) {
+    glProgramUniformMatrix4fv(m_shaderProgram, location, 1, GL_FALSE, glm::value_ptr(mat));
 }
 
 } //namespace veil

@@ -16,8 +16,9 @@ project(main)
 include(GenerateExportHeader)
 
 #find_package...
-find_package(glad CONFIG REQUIRED)
+find_package(glad  CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
+find_package(glm   CONFIG REQUIRED)
 
 #add_executable...
 add_library(veil SHARED
@@ -31,7 +32,9 @@ add_executable(main WIN32
 
 #target_link_libraries...
 target_link_libraries(veil PUBLIC 
-    glad::glad glfw
+    glad::glad 
+    glfw
+    glm::glm
 )
 
 target_link_libraries(main PRIVATE
