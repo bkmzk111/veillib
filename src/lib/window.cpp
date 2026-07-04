@@ -28,9 +28,8 @@ Window::Window(const std::string& title, int width, int height) {
                          // THE CODE HAS NOT BEEN TESTED ON LINUX YET
     #endif 
 
-    glfwSwapInterval(1);
-    glfwSetWindowUserPointer(m_window, this);
-    glfwSetFramebufferSizeCallback(m_window, Window::framebufferSizeCallback);
+    glfwSetWindowAttrib(m_window, GLFW_RESIZABLE, GLFW_FALSE);
+    glfwSwapInterval(1);    
 }
 Window::~Window() {
     
@@ -39,16 +38,6 @@ Window::~Window() {
         m_window = nullptr;
     }
     glfwTerminate();
-}
-
-bool Window::shouldClose() const {
-    return glfwWindowShouldClose(m_window);
-}
-void Window::pollEvents() const {
-    glfwPollEvents();
-}
-void Window::swapBuffers() const {
-    glfwSwapBuffers(m_window);
 }
 
 void Window::setUpdateCallback(std::function<void()> loopFunc) {
@@ -67,24 +56,11 @@ void Window::startUpdateLoop() const {
     }
 }
 
-void Window::getSize(int& width, int& height) const {
-    glfwGetFramebufferSize(m_window, &width, &height);
-}
 float Window::getAspectRatio() const {
     
     int w, h;
     getSize(w, h);
     return (h > 0) ? static_cast<float>(w) / h : 1.0f;
-}
-GLFWwindow* Window::getNativeHandle() const {
-    return m_window;
-}
-
-void Window::framebufferSizeCallback(GLFWwindow* window, int width, int height) {
-
-    auto* instance = static_cast<Window*>(glfwGetWindowUserPointer(window));
-    if (instance && glViewport != nullptr) 
-        glViewport(0, 0, width, height);
 }
 
 }; //namespace veil

@@ -87,13 +87,6 @@ Shader::~Shader() {
     glDeleteProgram(m_shaderProgram);
 }
 
-void Shader::useProgram() const {
-    glUseProgram(m_shaderProgram);
-}
-GLuint Shader::getID() const {
-    return m_shaderProgram;
-}
-
 void Shader::setUniform(int location, float x, float y, float z) {
     uniformVector3f(location, x, y, z);
 }

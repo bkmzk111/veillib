@@ -3,8 +3,7 @@
 
 #include <veil_export.h>
 
-#include <cstdlib>
-#include <iostream>
+#include <stdexcept>
 #include <string>
 #include <functional>
 
@@ -27,22 +26,20 @@ class VEIL_EXPORT Window {
         Window& operator=(Window&&) = delete;
         ~Window(); 
 
-        bool shouldClose() const;
-        void pollEvents()  const;
-        void swapBuffers() const;
+        inline bool shouldClose() const { return glfwWindowShouldClose(m_window); }
+        inline void pollEvents()  const { glfwPollEvents(); }
+        inline void swapBuffers() const { glfwSwapBuffers(m_window); }
 
         void setUpdateCallback(std::function<void()> loopFunc);
         void startUpdateLoop() const;
 
-        void getSize(int& width, int& height) const;
+        inline void getSize(int& width, int& height) const { glfwGetFramebufferSize(m_window, &width, &height); };
         float getAspectRatio() const;
-        GLFWwindow* getNativeHandle() const;
+        inline GLFWwindow* getNativeHandle() const { return m_window; };
 
     private:
         GLFWwindow* m_window;
         std::function<void()> m_loopFunc;
-
-        static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 }; //class Window
 
 }; //namespace veil

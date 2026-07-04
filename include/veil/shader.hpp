@@ -3,8 +3,6 @@
 
 #include <veil_export.h>
 
-#include <cstdlib>
-#include <iostream>
 #include <string>
 #include <span>
 #include <fstream>
@@ -21,7 +19,7 @@ class VEIL_EXPORT Shader {
         Shader(std::span<const std::string> files, std::span<const GLenum> types);
         ~Shader();
 
-        void useProgram() const;
+        inline void useProgram() const { glUseProgram(m_shaderProgram); }
 
         void setUniform(int location, float x, float y, float z);
         void setUniform(int location, glm::mat4 mat);
@@ -31,7 +29,7 @@ class VEIL_EXPORT Shader {
         inline void setUniform(int location, c_mat4 auto const& mat) 
             { uniformMatrix4f(location, mat); }
 
-        GLuint getID() const;
+        inline GLuint getID() const { return m_shaderProgram; }
     private:
         GLuint m_shaderProgram;
 

@@ -24,6 +24,7 @@ find_package(glm   CONFIG REQUIRED)
 add_library(veil SHARED
     src/lib/window.cpp
     src/lib/shader.cpp
+    src/lib/glcamera.cpp
 )
 
 add_executable(main WIN32 
