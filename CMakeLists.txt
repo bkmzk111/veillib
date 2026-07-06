@@ -16,15 +16,17 @@ project(main)
 include(GenerateExportHeader)
 
 #find_package...
-find_package(glad  CONFIG REQUIRED)
+find_package(glad CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
-find_package(glm   CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
+find_package(assimp CONFIG REQUIRED)
 
 #add_executable...
 add_library(veil SHARED
     src/lib/window.cpp
     src/lib/shader.cpp
     src/lib/glcamera.cpp
+    src/lib/model.cpp
 )
 
 add_executable(main WIN32 
@@ -36,6 +38,7 @@ target_link_libraries(veil PUBLIC
     glad::glad 
     glfw
     glm::glm
+    assimp::assimp
 )
 
 target_link_libraries(main PRIVATE
@@ -51,7 +54,6 @@ generate_export_header(veil
 target_link_options(main PRIVATE 
     "/ENTRY:mainCRTStartup"
 )
-
 target_include_directories(veil PUBLIC 
     include
     ${CMAKE_CURRENT_BINARY_DIR}/include

@@ -4,10 +4,12 @@
 #include <veil_export.h>
 
 #include <concepts>
+#include <string>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glad/glad.h>
 
 namespace veil {
 
@@ -22,6 +24,16 @@ struct VEIL_EXPORT Vector2 {
 struct VEIL_EXPORT Matrix4 {
     glm::mat4 mat;
     operator glm::mat4() const { return mat; }
+};
+
+struct VEIL_EXPORT Vertex {
+    Vector3 position;
+    Vector3 normal;
+    Vector2 texuv;
+};
+struct VEIL_EXPORT Texture {
+    GLuint id;
+    std::string type;
 };
 
 template<typename T>
