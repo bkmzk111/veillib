@@ -90,12 +90,18 @@ Shader::~Shader() {
 void Shader::setUniform(int location, float x, float y, float z) {
     uniformVector3f(location, x, y, z);
 }
+void Shader::setUniform(int location, float x, float y) {
+    uniformVector2f(location, x, y);
+}
 void Shader::setUniform(int location, glm::mat4 mat) {
     uniformMatrix4f(location, mat);
 }
 
 void Shader::uniformVector3f(int location, float x, float y, float z) {
     glProgramUniform3f(m_shaderProgram, location, x, y, z);
+}
+void Shader::uniformVector2f(int location, float x, float y) {
+    glProgramUniform2f(m_shaderProgram, location, x, y);
 }
 void Shader::uniformMatrix4f(int location, glm::mat4 mat) {
     glProgramUniformMatrix4fv(m_shaderProgram, location, 1, GL_FALSE, glm::value_ptr(mat));

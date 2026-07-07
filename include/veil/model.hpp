@@ -17,10 +17,10 @@ namespace veil {
 
 class VEIL_EXPORT Mesh {
     public:
-        Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture>& textures);
-        ~Mesh();
+        Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
+        ~Mesh() = default;
 
-        void render(Shader& shader);
+        void render(Shader& shader) const;
 
         inline const auto& getVertices() const { return m_vertices; }
         inline const auto& getIndices() const { return m_indices; }
@@ -35,16 +35,21 @@ class VEIL_EXPORT Mesh {
         void setup();
 };
 
-/*class VEIL_EXPORT Model {
+class VEIL_EXPORT Model {
     public:
         Model(const std::string& path);
+        ~Model() = default;
         
-        void render(Shader& shader); 
+        void render(Shader& shader) const; 
     private:
-        std::vector<Mesh> meshes;
-        std::string directory;
+        std::vector<Mesh> m_meshes;
+        std::string m_directory;
+        std::vector<Texture> m_texturesLoaded;
 
         void loadModel(const std::string& path);
-};*/
+        void processNode(aiNode* node, const aiScene* scene);
+        Mesh processMesh(aiMesh* mesh, const aiScene* scene);
+        std::vector<Texture> loadMTLTextures(aiMaterial* mat, aiTextureType type, const std::string& typeName);
+};
 
 };

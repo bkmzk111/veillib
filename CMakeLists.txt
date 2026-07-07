@@ -20,6 +20,7 @@ find_package(glad CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(assimp CONFIG REQUIRED)
+find_package(Stb REQUIRED)
 
 #add_executable...
 add_library(veil SHARED
@@ -27,6 +28,7 @@ add_library(veil SHARED
     src/lib/shader.cpp
     src/lib/glcamera.cpp
     src/lib/model.cpp
+    src/lib/assets.cpp
 )
 
 add_executable(main WIN32 
@@ -57,4 +59,5 @@ target_link_options(main PRIVATE
 target_include_directories(veil PUBLIC 
     include
     ${CMAKE_CURRENT_BINARY_DIR}/include
+    ${Stb_INCLUDE_DIR}
 )

@@ -5,6 +5,7 @@
 
 #include <concepts>
 #include <string>
+#include <stdexcept>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -34,6 +35,8 @@ struct VEIL_EXPORT Vertex {
 struct VEIL_EXPORT Texture {
     GLuint id;
     std::string type;
+    std::string path;
+    void loadFromFile(const std::string& path);
 };
 
 template<typename T>
