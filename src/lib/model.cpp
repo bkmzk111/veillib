@@ -3,76 +3,14 @@
 
 namespace veil {
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures) {
-
-    m_vertices = std::move(vertices);
-    m_indices = std::move(indices);
-    m_textures = std::move(textures);
-
-    setup();
-}
-
-void Mesh::setup() {
-
-    glCreateVertexArrays(1, &m_vao);
-
-    glCreateBuffers(1, &m_vbo);
-    glNamedBufferStorage(m_vbo, m_vertices.size()*sizeof(Vertex), &m_vertices[0], 0);
-    glVertexArrayVertexBuffer(m_vao, 0, m_vbo, 0, sizeof(Vertex));
-
-    glCreateBuffers(1, &m_ebo);
-    glNamedBufferStorage(m_ebo, m_indices.size()*sizeof(unsigned int), &m_indices[0], 0);
-    glVertexArrayElementBuffer(m_vao, m_ebo);
-
-    glEnableVertexArrayAttrib(m_vao, 0);
-    glVertexArrayAttribBinding(m_vao, 0, 0);
-    glVertexArrayAttribFormat(m_vao, 0, 3, GL_FLOAT, GL_FALSE, offsetof(Vertex, position));
-
-    glEnableVertexArrayAttrib(m_vao, 1);
-    glVertexArrayAttribBinding(m_vao, 1, 0);
-    glVertexArrayAttribFormat(m_vao, 1, 3, GL_FLOAT, GL_FALSE, offsetof(Vertex, normal));
-    
-    glEnableVertexArrayAttrib(m_vao, 2);
-    glVertexArrayAttribBinding(m_vao, 2, 0);
-    glVertexArrayAttribFormat(m_vao, 2, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, texuv));
-}
-
-/*Mesh::~Mesh() {
-    
-    glDeleteVertexArrays(1, &m_vao);
-    glDeleteBuffers(1, &m_vbo);
-    glDeleteBuffers(1, &m_ebo);
-
-    for (const auto& texture : m_textures)
-        glDeleteTextures(1, &texture.id);
-}*/
-
-void Mesh::render(Shader& shader) const {
-
-    unsigned int diffuseCount = 0;
-    unsigned int specularCount = 0;
-
-    for (unsigned int i = 0; i < m_textures.size(); ++i) {
-
-        std::string type = m_textures[i].type;
-        GLuint id = m_textures[i].id;
-        if (type == "texture_diffuse" && diffuseCount < 1) {
-            glBindTextureUnit(0 + diffuseCount, id);
-            diffuseCount++;
-        }
-        else if (type == "texture_specular" && specularCount < 1) {
-            glBindTextureUnit(1 + specularCount, id);
-            specularCount++;
-        }
-    }
-
-    glBindVertexArray(m_vao);
-    glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
-}
-
 Model::Model(const std::string& path) {
-
     loadModel(path);
+}
+
+Model::~Model() {
+    for (const auto& texture : m_texturesLoaded) 
+        if (texture.id) 
+            glDeleteTextures(1, &texture.id);
 }
 
 void Model::render(Shader& shader) const {
@@ -110,7 +48,10 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
-    std::vector<Texture> textures;
+    Material material;
+
+    vertices.reserve(mesh->mNumVertices);
+    indices.reserve(mesh->mNumFaces * 3);
 
     for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
 
@@ -148,44 +89,31 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 
     if (mesh->mMaterialIndex >= 0) {
 
-        aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-
-        std::vector<Texture> diffuseMaps = loadMTLTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
-        textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-        std::vector<Texture> specularMaps = loadMTLTextures(material, aiTextureType_SPECULAR, "texture_specular");
-        textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+        aiMaterial* aiMat = scene->mMaterials[mesh->mMaterialIndex];
+        material.diffuse = loadMTLTextures(aiMat, aiTextureType_DIFFUSE);
+        material.specular = loadMTLTextures(aiMat, aiTextureType_SPECULAR);
     }
 
-    return Mesh(vertices, indices, textures);
+    return Mesh(std::move(vertices), std::move(indices), material);
 }
 
-std::vector<Texture> Model::loadMTLTextures(aiMaterial* mat, aiTextureType type, const std::string& typeName) {
+GLuint Model::loadMTLTextures(aiMaterial* mat, aiTextureType type) {
 
-    std::vector<Texture> textures;
-    for (unsigned int i = 0; i < mat->GetTextureCount(type); ++i) {
+    if (mat->GetTextureCount(type) == 0)
+        return 0;
 
-        aiString path;
-        mat->GetTexture(type, i, &path);
+    aiString path;
+    mat->GetTexture(type, 0, &path);
 
-        bool skip = false;
-        for (const auto& texture : m_texturesLoaded)
-            if (std::strcmp(texture.path.data(), path.C_Str()) == 0) {
-                textures.push_back(texture);
-                skip = true;
-                break;
-            }
+    for (const auto& texture : m_texturesLoaded)
+        if (texture.path == path.C_Str())
+            return texture.id;
+    
+    std::string fullPath = m_directory + '/' + path.C_Str();
+    GLuint texture = loadTextureFromFile(fullPath);
 
-        if (!skip) {
-            Texture texture;
-            texture.loadFromFile(m_directory + '/' + path.C_Str());
-            texture.type = typeName;
-            texture.path = path.C_Str();
-
-            textures.push_back(texture);
-            m_texturesLoaded.push_back(texture);
-        }
-    }
-    return textures;
+    m_texturesLoaded.push_back(TextureCache{texture, path.C_Str()});
+    return texture;
 }
 
 };

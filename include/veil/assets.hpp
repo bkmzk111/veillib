@@ -14,6 +14,8 @@
 
 namespace veil {
 
+GLuint loadTextureFromFile(const std::string& path);
+
 struct VEIL_EXPORT Vector3 {
     glm::vec3 vec;
     operator glm::vec3() const { return vec; }
@@ -32,11 +34,13 @@ struct VEIL_EXPORT Vertex {
     Vector3 normal;
     Vector2 texuv;
 };
-struct VEIL_EXPORT Texture {
+struct VEIL_EXPORT TextureCache {
     GLuint id;
-    std::string type;
     std::string path;
-    void loadFromFile(const std::string& path);
+};
+struct VEIL_EXPORT Material {
+    GLuint diffuse;
+    GLuint specular;
 };
 
 template<typename T>

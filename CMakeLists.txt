@@ -27,6 +27,7 @@ add_library(veil SHARED
     src/lib/window.cpp
     src/lib/shader.cpp
     src/lib/glcamera.cpp
+    src/lib/mesh.cpp
     src/lib/model.cpp
     src/lib/assets.cpp
 )

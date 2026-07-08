@@ -6,7 +6,7 @@
 
 namespace veil {
 
-void Texture::loadFromFile(const std::string& path) {
+GLuint loadTextureFromFile(const std::string& path) {
 
     int width, height, channels;
     unsigned char* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
@@ -15,7 +15,7 @@ void Texture::loadFromFile(const std::string& path) {
 
         stbi_image_free(data);
         throw std::runtime_error("VEIL::STBI::CRITICAL " + std::string("Failed to load data at ") + path);
-        return;
+        return 0;
     }
 
     GLenum internalFormat = 0;
@@ -34,17 +34,20 @@ void Texture::loadFromFile(const std::string& path) {
         dataFormat = GL_RGBA;
     }
 
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1); 
-    glCreateTextures(GL_TEXTURE_2D, 1, &id);
-    glTextureStorage2D(id, 1, internalFormat, width, height);
-    glTextureSubImage2D(id, 0, 0, 0, width, height, dataFormat, GL_UNSIGNED_BYTE, data);
+    GLuint textureID;
+ 
+    glCreateTextures(GL_TEXTURE_2D, 1, &textureID);
+    glTextureStorage2D(textureID, 1, internalFormat, width, height);
+    glTextureSubImage2D(textureID, 0, 0, 0, width, height, dataFormat, GL_UNSIGNED_BYTE, data);
 
-    glTextureParameteri(this->id, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTextureParameteri(this->id, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTextureParameteri(this->id, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTextureParameteri(this->id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTextureParameteri(textureID, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTextureParameteri(textureID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTextureParameteri(textureID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTextureParameteri(textureID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     stbi_image_free(data);
+
+    return textureID;
 }
 
 };
