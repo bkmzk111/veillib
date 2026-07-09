@@ -130,9 +130,9 @@ Texture Model::loadMTLTextures(aiMaterial* mat, aiTextureType type) {
 
 Texture Model::loadMTLFromPath(const std::string& path) {
 
-    /*for (const auto& texture : m_texturesLoaded)
+    for (const auto& texture : m_texturesLoaded)
         if (texture.path == path)
-            return texture;*/
+            return texture;
     
     GLuint textureID = loadTextureFromFile(path);
     Texture texture{textureID, path};
@@ -197,7 +197,7 @@ void Model::loadFromBINCache(const std::string& filePath) {
 
             std::string diffPath(diffLen, '\0');
             in.read(diffPath.data(), diffLen);
-            
+
             std::string filename = std::filesystem::path(diffPath).filename().string();
             diffTexture = loadMTLFromPath(m_directory + '/' + filename);
         }
