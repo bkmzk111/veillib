@@ -31,7 +31,6 @@ add_library(veil SHARED
     src/lib/model.cpp
     src/lib/assets.cpp
 )
-
 add_executable(main WIN32 
     src/app/main.cpp
 )
@@ -43,12 +42,10 @@ target_link_libraries(veil PUBLIC
     glm::glm
     assimp::assimp
 )
-
 target_link_libraries(main PRIVATE
     veil
 )
 
-#target...
 generate_export_header(veil
     BASE_NAME veil
     EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/include/veil_export.h
