@@ -47,8 +47,8 @@ Mesh::Mesh(Mesh&& other) noexcept {
     other.m_vao = 0;
     other.m_vbo = 0;
     other.m_ebo = 0;
-    other.m_material.diffuse = 0;
-    other.m_material.specular = 0;
+    other.m_material.diffuse.id = 0;
+    other.m_material.specular.id = 0;
 }
 Mesh& Mesh::operator=(Mesh&& other) noexcept {
 
@@ -68,8 +68,8 @@ Mesh& Mesh::operator=(Mesh&& other) noexcept {
         other.m_vao = 0;
         other.m_vbo = 0;
         other.m_ebo = 0;
-        other.m_material.diffuse = 0;
-        other.m_material.specular = 0;
+        other.m_material.diffuse.id = 0;
+        other.m_material.specular.id = 0;
 
     }
     return *this;
@@ -83,8 +83,8 @@ Mesh::~Mesh() {
 
 void Mesh::render(Shader& shader) const {
 
-    glBindTextureUnit(0, m_material.diffuse);
-    glBindTextureUnit(1, m_material.specular);
+    glBindTextureUnit(0, m_material.diffuse.id);
+    glBindTextureUnit(1, m_material.specular.id);
 
     glBindVertexArray(m_vao);
     glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);

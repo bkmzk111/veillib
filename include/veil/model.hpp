@@ -4,6 +4,8 @@
 #include <veil_export.h>
 
 #include <vector>
+#include <fstream>
+#include <filesystem>
 
 #include <glad/glad.h>
 #include <assimp/Importer.hpp>
@@ -26,15 +28,21 @@ class VEIL_EXPORT Model {
         ~Model();
         
         void render(Shader& shader) const; 
+
+        inline const std::string& getDirectory() { return m_directory; }
     private:
         std::vector<Mesh> m_meshes;
         std::string m_directory;
-        std::vector<TextureCache> m_texturesLoaded;
+        std::vector<Texture> m_texturesLoaded;
 
         void loadModel(const std::string& path);
         void processNode(aiNode* node, const aiScene* scene);
         Mesh processMesh(aiMesh* mesh, const aiScene* scene);
-        GLuint loadMTLTextures(aiMaterial* mat, aiTextureType type);
+        Texture loadMTLTextures(aiMaterial* mat, aiTextureType type);
+        Texture loadMTLFromPath(const std::string& path);
+
+        void saveToBINCache(const std::string& folderPath);
+        void loadFromBINCache(const std::string& filePath);
 };
 
 };

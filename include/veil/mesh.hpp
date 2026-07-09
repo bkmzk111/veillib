@@ -23,9 +23,9 @@ class VEIL_EXPORT Mesh {
         
         void render(Shader& shader) const;
 
-        inline const auto& getVertices() const { return m_vertices; }
-        inline const auto& getIndices() const { return m_indices; }
-        inline const auto& getMaterial() const { return m_material; }
+        inline const std::span<const Vertex> getVertices() const { return m_vertices; }
+        inline const std::span<const unsigned int> getIndices() const { return m_indices; }
+        inline const Material& getMaterial() const { return m_material; }
     private:
         std::vector<Vertex> m_vertices;
         std::vector<unsigned int> m_indices;

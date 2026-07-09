@@ -34,13 +34,13 @@ struct VEIL_EXPORT Vertex {
     Vector3 normal;
     Vector2 texuv;
 };
-struct VEIL_EXPORT TextureCache {
+struct VEIL_EXPORT Texture {
     GLuint id;
     std::string path;
 };
 struct VEIL_EXPORT Material {
-    GLuint diffuse;
-    GLuint specular;
+    Texture diffuse;
+    Texture specular;
 };
 
 template<typename T>
