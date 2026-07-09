@@ -34,6 +34,12 @@ void Mesh::setup() {
     glEnableVertexArrayAttrib(m_vao, 2);
     glVertexArrayAttribBinding(m_vao, 2, 0);
     glVertexArrayAttribFormat(m_vao, 2, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, texuv));
+
+    m_vertices.clear();
+    m_vertices.shrink_to_fit();
+    
+    m_indices.clear();
+    m_indices.shrink_to_fit();
 }
 Mesh::Mesh(Mesh&& other) noexcept {
 

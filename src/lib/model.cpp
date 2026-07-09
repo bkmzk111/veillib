@@ -5,7 +5,7 @@ namespace veil {
 
 Model::Model(const std::string& path) {
 
-    m_directory = path.substr(0, path.find_last_of('/'));
+    m_directory = std::filesystem::path(path).parent_path().string();
 
     std::string cacheFile = m_directory + "/.cache/cache.bin";
     if (std::filesystem::exists(cacheFile)) {
@@ -31,12 +31,17 @@ void Model::render(Shader& shader) const {
 void Model::loadModel(const std::string& path) {
 
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals);
+    const aiScene* scene = importer.ReadFile(
+        path, 
+        aiProcess_Triangulate | 
+        aiProcess_FlipUVs | 
+        aiProcess_GenNormals |
+        aiProcess_JoinIdenticalVertices |
+        aiProcess_ImproveCacheLocality
+    );
 
-    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
+    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
         throw std::runtime_error("VEIL::ASSIMP::CRITICAL " + std::string(importer.GetErrorString()));
-        return;
-    }
 
     processNode(scene->mRootNode, scene);
 
@@ -113,17 +118,18 @@ Texture Model::loadMTLTextures(aiMaterial* mat, aiTextureType type) {
     if (mat->GetTextureCount(type) == 0)
         return Texture{0, "\0"};
 
-    aiString path;
-    mat->GetTexture(type, 0, &path);
+    aiString relativePath;
+    mat->GetTexture(type, 0, &relativePath);
+
+    std::string fullPath = m_directory + '/' + relativePath.C_Str();    
 
     for (const auto& texture : m_texturesLoaded)
-        if (texture.path == path.C_Str())
+        if (texture.path == fullPath)
             return texture;
     
-    std::string fullPath = m_directory + '/' + path.C_Str();
     GLuint textureID = loadTextureFromFile(fullPath);
 
-    Texture texture{textureID, path.C_Str()};
+    Texture texture{textureID, fullPath};
     m_texturesLoaded.push_back(texture);
     return texture;
 }
@@ -159,11 +165,11 @@ void Model::saveToBINCache(const std::string& folderPath) {
         out.write(reinterpret_cast<char*>(&vertCount), sizeof(vertCount));
         out.write(reinterpret_cast<char*>(&indCount), sizeof(indCount));
 
-        out.write(reinterpret_cast<const char*>(mesh.getVertices().data()), vertCount*sizeof(Vertex));
-        out.write(reinterpret_cast<const char*>(mesh.getIndices().data()), indCount*sizeof(unsigned int));
-
         if (diffLen > 0) out.write(mesh.getMaterial().diffuse.path.c_str(), diffLen);
         if (specLen > 0) out.write(mesh.getMaterial().specular.path.c_str(), specLen);
+
+        out.write(reinterpret_cast<const char*>(mesh.getVertices().data()), vertCount*sizeof(Vertex));
+        out.write(reinterpret_cast<const char*>(mesh.getIndices().data()), indCount*sizeof(unsigned int));
     }
 }
 
@@ -187,30 +193,26 @@ void Model::loadFromBINCache(const std::string& filePath) {
         in.read(reinterpret_cast<char*>(&vertCount), sizeof(vertCount));
         in.read(reinterpret_cast<char*>(&indCount), sizeof(indCount));
 
-        std::vector<Vertex> vertices(vertCount);
-        std::vector<unsigned int> indices(indCount);
-        in.read(reinterpret_cast<char*>(vertices.data()), vertCount*sizeof(Vertex));
-        in.read(reinterpret_cast<char*>(indices.data()), indCount*sizeof(unsigned int));
-
         Texture diffTexture{0, "\0"};
         if (diffLen > 0) {
 
             std::string diffPath(diffLen, '\0');
             in.read(diffPath.data(), diffLen);
-
-            std::string filename = std::filesystem::path(diffPath).filename().string();
-            diffTexture = loadMTLFromPath(m_directory + '/' + filename);
+            diffTexture = loadMTLFromPath(diffPath);
         }
         Texture specTexture{0, "\0"};
         if (specLen > 0) {
 
             std::string specPath(specLen, '\0');
             in.read(specPath.data(), specLen);
-
-            std::string filename = std::filesystem::path(specPath).filename().string();
-            specTexture = loadMTLFromPath(m_directory + '/' + filename);
+            specTexture = loadMTLFromPath(specPath);
         }
         Material material{diffTexture, specTexture};
+
+        std::vector<Vertex> vertices(vertCount);
+        std::vector<unsigned int> indices(indCount);
+        in.read(reinterpret_cast<char*>(vertices.data()), vertCount*sizeof(Vertex));
+        in.read(reinterpret_cast<char*>(indices.data()), indCount*sizeof(unsigned int));
 
         m_meshes.emplace_back(std::move(vertices), std::move(indices), material);
     }
