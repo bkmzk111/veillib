@@ -29,7 +29,7 @@ add_library(veil SHARED
     src/lib/glcamera.cpp
     src/lib/mesh.cpp
     src/lib/model.cpp
-    src/lib/assets.cpp
+    src/lib/cachemgr.cpp
 )
 add_executable(main WIN32 
     src/app/main.cpp

@@ -8,18 +8,14 @@ Model::Model(const std::string& path) {
     m_directory = std::filesystem::path(path).parent_path().string();
 
     std::string cacheFile = m_directory + "/.cache/cache.bin";
+
     if (std::filesystem::exists(cacheFile)) {
+
         loadFromBINCache(cacheFile);
         return;
     }
 
     loadModel(path);
-}
-
-Model::~Model() {
-    for (const auto& texture : m_texturesLoaded) 
-        if (texture.id) 
-            glDeleteTextures(1, &texture.id);
 }
 
 void Model::render(Shader& shader) const {
@@ -106,44 +102,20 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
     if (mesh->mMaterialIndex >= 0) {
 
         aiMaterial* aiMat = scene->mMaterials[mesh->mMaterialIndex];
-        material.diffuse = loadMTLTextures(aiMat, aiTextureType_DIFFUSE);
-        material.specular = loadMTLTextures(aiMat, aiTextureType_SPECULAR);
+
+        if (aiMat->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
+            aiString relativePath;
+            aiMat->GetTexture(aiTextureType_DIFFUSE, 0, &relativePath);
+            material.diffuse = TextureStorage::getInstance().loadTexture(m_directory + '/' + relativePath.C_Str());
+        }
+        if (aiMat->GetTextureCount(aiTextureType_SPECULAR) > 0) {
+            aiString relativePath;
+            aiMat->GetTexture(aiTextureType_SPECULAR, 0, &relativePath);
+            material.specular = TextureStorage::getInstance().loadTexture(m_directory + '/' + relativePath.C_Str());
+        }
     }
 
     return Mesh(std::move(vertices), std::move(indices), material);
-}
-
-Texture Model::loadMTLTextures(aiMaterial* mat, aiTextureType type) {
-
-    if (mat->GetTextureCount(type) == 0)
-        return Texture{0, "\0"};
-
-    aiString relativePath;
-    mat->GetTexture(type, 0, &relativePath);
-
-    std::string fullPath = m_directory + '/' + relativePath.C_Str();    
-
-    for (const auto& texture : m_texturesLoaded)
-        if (texture.path == fullPath)
-            return texture;
-    
-    GLuint textureID = loadTextureFromFile(fullPath);
-
-    Texture texture{textureID, fullPath};
-    m_texturesLoaded.push_back(texture);
-    return texture;
-}
-
-Texture Model::loadMTLFromPath(const std::string& path) {
-
-    for (const auto& texture : m_texturesLoaded)
-        if (texture.path == path)
-            return texture;
-    
-    GLuint textureID = loadTextureFromFile(path);
-    Texture texture{textureID, path};
-    m_texturesLoaded.push_back(texture);
-    return texture;
 }
 
 void Model::saveToBINCache(const std::string& folderPath) {
@@ -198,14 +170,14 @@ void Model::loadFromBINCache(const std::string& filePath) {
 
             std::string diffPath(diffLen, '\0');
             in.read(diffPath.data(), diffLen);
-            diffTexture = loadMTLFromPath(diffPath);
+            diffTexture = TextureStorage::getInstance().loadTexture(diffPath);
         }
         Texture specTexture{0, "\0"};
         if (specLen > 0) {
 
             std::string specPath(specLen, '\0');
             in.read(specPath.data(), specLen);
-            specTexture = loadMTLFromPath(specPath);
+            specTexture = TextureStorage::getInstance().loadTexture(specPath);
         }
         Material material{diffTexture, specTexture};
 

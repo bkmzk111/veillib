@@ -15,6 +15,7 @@
 #include "assets.hpp"
 #include "shader.hpp"
 #include "mesh.hpp"
+#include "cachemgr.hpp"
 
 namespace veil {
 
@@ -25,21 +26,19 @@ class VEIL_EXPORT Model {
         Model& operator=(const Model&) = delete;
         Model(Model&&) noexcept = default;
         Model& operator=(Model&&) noexcept = default;
-        ~Model();
+        ~Model() = default;
         
         void render(Shader& shader) const; 
 
         inline const std::string& getDirectory() { return m_directory; }
+        
     private:
         std::vector<Mesh> m_meshes;
         std::string m_directory;
-        std::vector<Texture> m_texturesLoaded;
 
         void loadModel(const std::string& path);
         void processNode(aiNode* node, const aiScene* scene);
         Mesh processMesh(aiMesh* mesh, const aiScene* scene);
-        Texture loadMTLTextures(aiMaterial* mat, aiTextureType type);
-        Texture loadMTLFromPath(const std::string& path);
 
         void saveToBINCache(const std::string& folderPath);
         void loadFromBINCache(const std::string& filePath);

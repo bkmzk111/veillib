@@ -7,3 +7,4 @@
 #include "veil/glcamera.hpp"
 #include "veil/mesh.hpp"
 #include "veil/model.hpp"
+#include "veil/cachemgr.hpp"

@@ -1,12 +1,50 @@
 
-#include <veil/assets.hpp>
+#include <veil/cachemgr.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
 namespace veil {
 
-GLuint loadTextureFromFile(const std::string& path) {
+TextureStorage::~TextureStorage() {
+    shutdown(); //fallback
+}
+
+Texture TextureStorage::loadTexture(const std::string& path) {
+
+    if (path.empty() || path == "\0")
+        return Texture{0, "\0"};
+
+    auto it = m_cache.find(path);
+    if (it != m_cache.end())
+        return it->second;
+
+    GLuint textureID = loadTextureFromFile(path);
+    Texture texture{textureID, path};
+
+    m_cache[path] = texture;
+
+    return texture;
+}
+
+void TextureStorage::shutdown() {
+
+    auto& instance = getInstance();
+    for (const auto& [path, texture] : instance.m_cache) {
+        if (texture.id) {
+            glDeleteTextures(1, &texture.id);
+        }
+    }
+    instance.m_cache.clear();
+}
+
+TextureStorage& TextureStorage::getInstance() {
+
+    static TextureStorage ts;
+    return ts;
+}
+
+GLuint TextureStorage::loadTextureFromFile(const std::string& path) {
 
     stbi_set_flip_vertically_on_load(true);
 
