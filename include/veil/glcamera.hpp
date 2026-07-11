@@ -4,8 +4,9 @@
 #include <veil_export.h>
 
 #include <functional>
-#include <utility>
 #include <algorithm>
+
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "assets.hpp"
 #include "window.hpp"
@@ -26,10 +27,10 @@ class VEIL_EXPORT GLCamera {
         inline const Vector3& getUp() const { return m_up; }
         inline const Matrix4& getProjection() const { return m_projection; }
         inline const Matrix4& getView() const { return m_view; }
-        inline const float getYaw() const { return m_callbackData.yaw; }
-        inline const float getPitch() const { return m_callbackData.pitch; }
+        inline const float& getYaw() const { return m_callbackData.yaw; }
+        inline const float& getPitch() const { return m_callbackData.pitch; }
 
-        inline auto& getMouseCallback() { return m_mouseFunc; }
+        inline const auto& getMouseCallback() const { return m_mouseFunc; }
 
     private:
         Vector3 m_position;

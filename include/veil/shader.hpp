@@ -8,7 +8,7 @@
 #include <fstream>
 #include <vector>
 
-#include <glad/glad.h>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "assets.hpp"
 

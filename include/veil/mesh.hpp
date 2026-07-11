@@ -5,8 +5,6 @@
 
 #include <vector>
 
-#include <glad/glad.h>
-
 #include "assets.hpp"
 #include "shader.hpp"
 

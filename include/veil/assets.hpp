@@ -5,25 +5,22 @@
 
 #include <concepts>
 #include <string>
-#include <stdexcept>
 
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <glad/glad.h>
 
 namespace veil {
 
 struct VEIL_EXPORT Vector3 {
-    glm::vec3 vec;
+    glm::vec3 vec = {0.0f, 0.0f, 0.0f};
     operator glm::vec3() const { return vec; }
 };
 struct VEIL_EXPORT Vector2 {
-    glm::vec2 vec;
+    glm::vec2 vec = {0.0f, 0.0f};
     operator glm::vec2() const { return vec; }
 };
 struct VEIL_EXPORT Matrix4 {
-    glm::mat4 mat;
+    glm::mat4 mat = glm::mat4(1.0f);
     operator glm::mat4() const { return mat; }
 };
 
@@ -33,7 +30,7 @@ struct VEIL_EXPORT Vertex {
     Vector2 texuv;
 };
 struct VEIL_EXPORT Texture {
-    GLuint id = 0;
+    GLuint id = 0u;
     std::string path = "\0";
 };
 struct VEIL_EXPORT Material {

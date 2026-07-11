@@ -47,8 +47,6 @@ Mesh::Mesh(Mesh&& other) noexcept {
     other.m_vao = 0;
     other.m_vbo = 0;
     other.m_ebo = 0;
-    other.m_material.diffuse.id = 0;
-    other.m_material.specular.id = 0;
 }
 Mesh& Mesh::operator=(Mesh&& other) noexcept {
 
@@ -68,8 +66,6 @@ Mesh& Mesh::operator=(Mesh&& other) noexcept {
         other.m_vao = 0;
         other.m_vbo = 0;
         other.m_ebo = 0;
-        other.m_material.diffuse.id = 0;
-        other.m_material.specular.id = 0;
 
     }
     return *this;

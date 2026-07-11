@@ -4,6 +4,7 @@
 #include <veil_export.h>
 
 #include <unordered_map>
+#include <stdexcept>
 
 #include "assets.hpp"
 
@@ -27,6 +28,6 @@ class VEIL_EXPORT TextureStorage {
         std::unordered_map<std::string, Texture> m_cache;
 
         GLuint loadTextureFromFile(const std::string& path);
-};
+}; //class TextureStorage
 
-};
+}; //namespace veil
