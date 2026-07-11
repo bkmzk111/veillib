@@ -5,17 +5,19 @@ namespace veil {
 
 Model::Model(const std::string& path) {
 
+    LogTimer::getInstance().startFor(path);
+
     m_directory = std::filesystem::path(path).parent_path().string();
 
     std::string cacheFile = m_directory + "/.cache/cache.bin";
 
-    if (std::filesystem::exists(cacheFile)) {
-
+    if (std::filesystem::exists(cacheFile)) 
         loadFromBINCache(cacheFile);
-        return;
-    }
+    else
+        loadModel(path);
 
-    loadModel(path);
+    std::cout << LogTimer::getInstance().elapsedOf(path) << std::endl;
+    LogTimer::getInstance().endFor(path);
 }
 
 void Model::render(Shader& shader) const {

@@ -8,3 +8,4 @@
 #include "veil/mesh.hpp"
 #include "veil/model.hpp"
 #include "veil/cachemgr.hpp"
+#include "veil/logmgr.hpp"

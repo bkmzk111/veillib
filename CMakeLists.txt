@@ -30,6 +30,7 @@ add_library(veil SHARED
     src/lib/mesh.cpp
     src/lib/model.cpp
     src/lib/cachemgr.cpp
+    src/lib/logmgr.cpp
 )
 add_executable(main WIN32 
     src/app/main.cpp

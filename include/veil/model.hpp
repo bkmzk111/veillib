@@ -15,6 +15,7 @@
 #include "shader.hpp"
 #include "mesh.hpp"
 #include "cachemgr.hpp"
+#include "logmgr.hpp"
 
 namespace veil {
 
@@ -41,6 +42,6 @@ class VEIL_EXPORT Model {
 
         void saveToBINCache(const std::string& folderPath);
         void loadFromBINCache(const std::string& filePath);
-};
+}; //class Model
 
-};
+}; //namespace veil

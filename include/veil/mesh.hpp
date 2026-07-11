@@ -32,6 +32,6 @@ class VEIL_EXPORT Mesh {
         GLuint m_vao, m_vbo, m_ebo;
         
         void setup();
-};
+}; //class Mesh
 
-};
+}; //namespace veil
