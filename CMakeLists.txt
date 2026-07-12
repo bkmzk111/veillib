@@ -32,7 +32,7 @@ add_library(veil SHARED
     src/lib/cachemgr.cpp
     src/lib/logmgr.cpp
 )
-add_executable(main WIN32 
+add_executable(main #WIN32 
     src/app/main.cpp
 )
 
@@ -52,9 +52,9 @@ generate_export_header(veil
     EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/include/veil_export.h
 )
 
-target_link_options(main PRIVATE 
-    "/ENTRY:mainCRTStartup"
-)
+#target_link_options(main PRIVATE 
+#    "/ENTRY:mainCRTStartup"
+#)
 target_include_directories(veil PUBLIC 
     include
     ${CMAKE_CURRENT_BINARY_DIR}/include

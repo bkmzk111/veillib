@@ -3,31 +3,20 @@
 
 namespace veil {
 
-void LogTimer::startFor(const std::string& procName) {
+LogTimer::LogTimer(const std::string& procName) {
 
-    m_timeStorage[procName] = std::chrono::steady_clock::now();
-}
-long long LogTimer::elapsedOf(const std::string& procName) {
+    m_procName = procName;
+    m_startTimePoint = std::chrono::steady_clock::now();
 
-    auto it = m_timeStorage.find(procName);
-    if (it == m_timeStorage.end())
-        return -1; 
-
-    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
-        std::chrono::steady_clock::now() - it->second
-    );
-
-    return elapsed.count();
-}
-void LogTimer::endFor(const std::string& procName) {
-
-    m_timeStorage.erase(procName);
+    std::cout << std::format("VEIL::INFO Process '{}' started", m_procName) << std::endl;
 }
 
-LogTimer& LogTimer::getInstance() {
+LogTimer::~LogTimer() {
 
-    static LogTimer lt;
-    return lt;
+    const std::chrono::steady_clock::time_point endTimePoint = std::chrono::steady_clock::now();
+    const auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTimePoint - m_startTimePoint);
+
+    std::cout << std::format("VEIL::INFO Process '{}' finished in {}", m_procName, elapsedTime) << std::endl;
 }
 
 } //namespace veil

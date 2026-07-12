@@ -5,27 +5,20 @@
 
 #include <chrono>
 #include <unordered_map>
-#include <iostream>>
+#include <iostream>
+#include <format>
 
 namespace veil {
 
 class VEIL_EXPORT LogTimer {
     public:
-        LogTimer() = default;
-        LogTimer(const LogTimer&) = delete;
-        LogTimer& operator=(const LogTimer&) = delete;
-        LogTimer(LogTimer&&) = delete;
-        LogTimer& operator=(LogTimer&&) = delete;
-        ~LogTimer() = default; 
-
-        void startFor(const std::string& procName);
-        long long elapsedOf(const std::string& procName);
-        void endFor(const std::string& procName);
-
-        static LogTimer& getInstance();
-
+        LogTimer(const std::string& procName);
+        ~LogTimer();
     private:
-        std::unordered_map<std::string, std::chrono::steady_clock::time_point> m_timeStorage; 
+        std::string m_procName;
+        std::chrono::steady_clock::time_point m_startTimePoint;
 };
+
+#define VEIL_START_LOG_TIMER_FOR(a) LogTimer lt##__LINE__(a);
 
 }; //namespace veil

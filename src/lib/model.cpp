@@ -5,7 +5,7 @@ namespace veil {
 
 Model::Model(const std::string& path) {
 
-    LogTimer::getInstance().startFor(path);
+    VEIL_START_LOG_TIMER_FOR(path)
 
     m_directory = std::filesystem::path(path).parent_path().string();
 
@@ -15,9 +15,6 @@ Model::Model(const std::string& path) {
         loadFromBINCache(cacheFile);
     else
         loadModel(path);
-
-    std::cout << LogTimer::getInstance().elapsedOf(path) << std::endl;
-    LogTimer::getInstance().endFor(path);
 }
 
 void Model::render(Shader& shader) const {
