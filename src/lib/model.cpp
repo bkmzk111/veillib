@@ -124,23 +124,22 @@ void Model::saveToBINCache(const std::string& folderPath) {
     unsigned int meshNum = m_meshes.size();
     out.write(reinterpret_cast<char*>(&meshNum), sizeof(meshNum));
 
+    util::BINCacheHeader header;
+
     for (const auto& mesh : m_meshes) {
 
-        unsigned int diffLen = mesh.getMaterial().diffuse.path.length();
-        unsigned int specLen = mesh.getMaterial().specular.path.length();
-        unsigned int vertCount = mesh.getVertices().size();
-        unsigned int indCount = mesh.getIndices().size();
+        header.diffLen = mesh.getMaterial().diffuse.path.length();
+        header.specLen = mesh.getMaterial().specular.path.length();
+        header.vertCount = mesh.getVertices().size();
+        header.indCount = mesh.getIndices().size();
 
-        out.write(reinterpret_cast<char*>(&diffLen), sizeof(diffLen));
-        out.write(reinterpret_cast<char*>(&specLen), sizeof(specLen));
-        out.write(reinterpret_cast<char*>(&vertCount), sizeof(vertCount));
-        out.write(reinterpret_cast<char*>(&indCount), sizeof(indCount));
+        out.write(reinterpret_cast<char*>(&header), sizeof(header));
 
-        if (diffLen > 0) out.write(mesh.getMaterial().diffuse.path.c_str(), diffLen);
-        if (specLen > 0) out.write(mesh.getMaterial().specular.path.c_str(), specLen);
+        if (header.diffLen > 0) out.write(mesh.getMaterial().diffuse.path.c_str(), header.diffLen);
+        if (header.specLen > 0) out.write(mesh.getMaterial().specular.path.c_str(), header.specLen);
 
-        out.write(reinterpret_cast<const char*>(mesh.getVertices().data()), vertCount*sizeof(Vertex));
-        out.write(reinterpret_cast<const char*>(mesh.getIndices().data()), indCount*sizeof(unsigned int));
+        out.write(reinterpret_cast<const char*>(mesh.getVertices().data()), header.vertCount*sizeof(Vertex));
+        out.write(reinterpret_cast<const char*>(mesh.getIndices().data()), header.indCount*sizeof(unsigned int));
     }
 }
 
@@ -152,38 +151,32 @@ void Model::loadFromBINCache(const std::string& filePath) {
     in.read(reinterpret_cast<char*>(&meshNum), sizeof(meshNum));
     m_meshes.reserve(meshNum);
 
+    util::BINCacheHeader header;
+
     for (unsigned int i = 0; i < meshNum; ++i) {
 
-        unsigned int diffLen = 0;
-        unsigned int specLen = 0;
-        unsigned int vertCount = 0;
-        unsigned int indCount = 0;
-
-        in.read(reinterpret_cast<char*>(&diffLen), sizeof(diffLen));
-        in.read(reinterpret_cast<char*>(&specLen), sizeof(specLen));
-        in.read(reinterpret_cast<char*>(&vertCount), sizeof(vertCount));
-        in.read(reinterpret_cast<char*>(&indCount), sizeof(indCount));
+        in.read(reinterpret_cast<char*>(&header), sizeof(header));
 
         Texture diffTexture{0, "\0"};
-        if (diffLen > 0) {
+        if (header.diffLen > 0) {
 
-            std::string diffPath(diffLen, '\0');
-            in.read(diffPath.data(), diffLen);
+            std::string diffPath(header.diffLen, '\0');
+            in.read(diffPath.data(), header.diffLen);
             diffTexture = TextureStorage::getInstance().loadTexture(diffPath);
         }
         Texture specTexture{0, "\0"};
-        if (specLen > 0) {
+        if (header.specLen > 0) {
 
-            std::string specPath(specLen, '\0');
-            in.read(specPath.data(), specLen);
+            std::string specPath(header.specLen, '\0');
+            in.read(specPath.data(), header.specLen);
             specTexture = TextureStorage::getInstance().loadTexture(specPath);
         }
         Material material{diffTexture, specTexture};
 
-        std::vector<Vertex> vertices(vertCount);
-        std::vector<unsigned int> indices(indCount);
-        in.read(reinterpret_cast<char*>(vertices.data()), vertCount*sizeof(Vertex));
-        in.read(reinterpret_cast<char*>(indices.data()), indCount*sizeof(unsigned int));
+        std::vector<Vertex> vertices(header.vertCount);
+        std::vector<unsigned int> indices(header.indCount);
+        in.read(reinterpret_cast<char*>(vertices.data()), header.vertCount*sizeof(Vertex));
+        in.read(reinterpret_cast<char*>(indices.data()), header.indCount*sizeof(unsigned int));
 
         m_meshes.emplace_back(std::move(vertices), std::move(indices), material);
     }

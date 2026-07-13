@@ -7,6 +7,7 @@
 namespace veil {
 
 TextureStorage::~TextureStorage() {
+    
     shutdown(); //fallback
 }
 

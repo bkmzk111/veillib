@@ -3,16 +3,12 @@
 
 namespace veil {
 
-GLCamera::GLCamera(const Vector2& size, 
-                   const Vector3& initPos, 
-                   const Vector3& up, 
-                   float aspectRatio, 
-                   float fovyDegrees) {
+GLCamera::GLCamera(const Vector2& size, const Vector3& initPos, const Vector3& up, float aspectRatio, float fovyDeg) {
 
     m_position = initPos;
     m_up = up;
 
-    m_projection = Matrix4(glm::perspective(glm::radians(fovyDegrees), aspectRatio, 0.1f, 500.0f));
+    m_projection = Matrix4(glm::perspective(glm::radians(fovyDeg), aspectRatio, 0.1f, 500.0f));
     m_view = Matrix4(glm::mat4(1.0f));
 
     m_callbackData.lastx = size.vec.x / 2.0f;

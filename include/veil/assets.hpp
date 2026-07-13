@@ -54,4 +54,15 @@ concept c_mat4 = requires(T m) {
     {m.mat} -> std::convertible_to<glm::mat4>;
 };
 
+namespace util {
+
+    struct BINCacheHeader {
+
+        unsigned int diffLen;
+        unsigned int specLen;
+        unsigned int vertCount;
+        unsigned int indCount;
+    };
+};
+
 }; //namespace veil

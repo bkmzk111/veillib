@@ -15,7 +15,7 @@ namespace veil {
 
 class VEIL_EXPORT GLCamera {
     public:
-        GLCamera(const Vector2& size, const Vector3& initPos, const Vector3& up, float aspectRatio, float fovyDegrees);
+        GLCamera(const Vector2& size, const Vector3& initPos, const Vector3& up, float aspectRatio, float fovyDeg);
         ~GLCamera() = default;
 
         void calculateAttitude(double xpos, double ypos);
