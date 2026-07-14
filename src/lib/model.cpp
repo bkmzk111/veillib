@@ -121,62 +121,112 @@ void Model::saveToBINCache(const std::string& folderPath) {
 
     std::ofstream out(folderPath + "/cache.bin", std::ios::binary);
 
-    unsigned int meshNum = m_meshes.size();
-    out.write(reinterpret_cast<char*>(&meshNum), sizeof(meshNum));
+    size_t totalBytes = sizeof(unsigned int);
+
+    for (const auto& mesh : m_meshes) {
+
+        totalBytes += sizeof(util::BINCacheHeader);
+        totalBytes += mesh.getMaterial().diffuse.path.length();
+        totalBytes += mesh.getMaterial().specular.path.length();
+        totalBytes += mesh.getVertices().size() * sizeof(Vertex);
+        totalBytes += mesh.getIndices().size() * sizeof(unsigned int);
+    }
+
+    std::vector<char> fileBuffer(totalBytes);
+    char* bufferPtr = fileBuffer.data();
+
+    unsigned int meshNum = static_cast<unsigned int>(m_meshes.size());
+    std::memcpy(bufferPtr, &meshNum, sizeof(meshNum));
+    bufferPtr += sizeof(meshNum);
 
     util::BINCacheHeader header;
 
     for (const auto& mesh : m_meshes) {
 
-        header.diffLen = mesh.getMaterial().diffuse.path.length();
-        header.specLen = mesh.getMaterial().specular.path.length();
-        header.vertCount = mesh.getVertices().size();
-        header.indCount = mesh.getIndices().size();
+        const auto& diffPath = mesh.getMaterial().diffuse.path;
+        const auto& specPath = mesh.getMaterial().specular.path;
 
-        out.write(reinterpret_cast<char*>(&header), sizeof(header));
+        header.diffLen = static_cast<unsigned int>(diffPath.length());
+        header.specLen = static_cast<unsigned int>(specPath.length());
+        header.vertCount = static_cast<unsigned int>(mesh.getVertices().size());
+        header.indCount = static_cast<unsigned int>(mesh.getIndices().size());
+        std::memcpy(bufferPtr, &header, sizeof(header));
+        bufferPtr += sizeof(header);
 
-        if (header.diffLen > 0) out.write(mesh.getMaterial().diffuse.path.c_str(), header.diffLen);
-        if (header.specLen > 0) out.write(mesh.getMaterial().specular.path.c_str(), header.specLen);
+        if (header.diffLen > 0) {
+            std::memcpy(bufferPtr, diffPath.data(), header.diffLen);
+            bufferPtr += header.diffLen;
+        }
+        if (header.specLen > 0) {
+            std::memcpy(bufferPtr, specPath.data(), header.specLen);
+            bufferPtr += header.specLen;
+        }
 
-        out.write(reinterpret_cast<const char*>(mesh.getVertices().data()), header.vertCount*sizeof(Vertex));
-        out.write(reinterpret_cast<const char*>(mesh.getIndices().data()), header.indCount*sizeof(unsigned int));
+        size_t vertBytes = header.vertCount * sizeof(Vertex);
+        std::memcpy(bufferPtr, mesh.getVertices().data(), vertBytes);
+        bufferPtr += vertBytes;
+
+        size_t indBytes = header.indCount * sizeof(unsigned int);
+        std::memcpy(bufferPtr, mesh.getIndices().data(), indBytes);
+        bufferPtr += indBytes;
     }
+
+    out.write(fileBuffer.data(), totalBytes);
 }
 
 void Model::loadFromBINCache(const std::string& filePath) {
 
-    std::ifstream in(filePath, std::ios::binary);
+    std::ifstream in(filePath, std::ios::binary | std::ios::ate);
+
+    std::streamsize fileSize = in.tellg();
+    in.seekg(0, std::ios::beg);
+
+    std::vector<char> fileBuffer(fileSize);
+    in.read(fileBuffer.data(), fileSize);
+    
+    const char* bufferPtr = fileBuffer.data();
 
     unsigned int meshNum = 0;
-    in.read(reinterpret_cast<char*>(&meshNum), sizeof(meshNum));
+    std::memcpy(&meshNum, bufferPtr, sizeof(meshNum));
+    bufferPtr += sizeof(meshNum);
+
     m_meshes.reserve(meshNum);
 
+    std::vector<Vertex> vertices;
+    std::vector<unsigned int> indices;
     util::BINCacheHeader header;
 
     for (unsigned int i = 0; i < meshNum; ++i) {
 
-        in.read(reinterpret_cast<char*>(&header), sizeof(header));
+        std::memcpy(&header, bufferPtr, sizeof(header));
+        bufferPtr += sizeof(header);
 
         Texture diffTexture{0, "\0"};
         if (header.diffLen > 0) {
 
-            std::string diffPath(header.diffLen, '\0');
-            in.read(diffPath.data(), header.diffLen);
+            std::string diffPath(bufferPtr, header.diffLen);
+            bufferPtr += header.diffLen;
             diffTexture = TextureStorage::getInstance().loadTexture(diffPath);
         }
         Texture specTexture{0, "\0"};
         if (header.specLen > 0) {
 
-            std::string specPath(header.specLen, '\0');
-            in.read(specPath.data(), header.specLen);
+            std::string specPath(bufferPtr, header.specLen);
+            bufferPtr += header.specLen;
             specTexture = TextureStorage::getInstance().loadTexture(specPath);
         }
         Material material{diffTexture, specTexture};
 
-        std::vector<Vertex> vertices(header.vertCount);
-        std::vector<unsigned int> indices(header.indCount);
-        in.read(reinterpret_cast<char*>(vertices.data()), header.vertCount*sizeof(Vertex));
-        in.read(reinterpret_cast<char*>(indices.data()), header.indCount*sizeof(unsigned int));
+        vertices.resize(header.vertCount);
+        indices.resize(header.indCount);
+
+        size_t vertBytes = sizeof(Vertex) * header.vertCount;
+        size_t indBytes = sizeof(unsigned int) * header.indCount;
+
+        std::memcpy(vertices.data(), bufferPtr, vertBytes);
+        bufferPtr += vertBytes;
+        std::memcpy(indices.data(), bufferPtr, indBytes);
+        bufferPtr += indBytes;
 
         m_meshes.emplace_back(std::move(vertices), std::move(indices), material);
     }
