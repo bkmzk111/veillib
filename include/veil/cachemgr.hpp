@@ -10,6 +10,9 @@
 
 namespace veil {
 
+constexpr std::string g_cacheFile = "/cache.bin";
+constexpr std::string g_cacheDir  = "/.cache";
+
 class VEIL_EXPORT TextureStorage {
     public:
         TextureStorage() = default;

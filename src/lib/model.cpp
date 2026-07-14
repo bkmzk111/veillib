@@ -9,7 +9,7 @@ Model::Model(const std::string& path) {
 
     m_directory = std::filesystem::path(path).parent_path().string();
 
-    std::string cacheFile = m_directory + "/.cache/cache.bin";
+    std::string cacheFile = m_directory + g_cacheDir + g_cacheFile;
 
     if (std::filesystem::exists(cacheFile)) 
         loadFromBINCache(cacheFile);
@@ -40,7 +40,7 @@ void Model::loadModel(const std::string& path) {
 
     processNode(scene->mRootNode, scene);
 
-    std::string cacheDir = m_directory + "/.cache";
+    std::string cacheDir = m_directory + g_cacheDir;
     std::filesystem::create_directories(cacheDir);
     saveToBINCache(cacheDir);
 }
@@ -119,7 +119,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 
 void Model::saveToBINCache(const std::string& folderPath) {
 
-    std::ofstream out(folderPath + "/cache.bin", std::ios::binary);
+    std::ofstream out(folderPath + g_cacheFile, std::ios::binary);
 
     size_t totalBytes = sizeof(unsigned int);
 
