@@ -30,7 +30,9 @@ class VEIL_EXPORT Model {
         
         void render(Shader& shader) const; 
 
-        inline const std::string& getDirectory() { return m_directory; }
+        inline const std::string& getDirectory() const { return m_directory; }
+        inline std::span<const Mesh> getMeshesRead() const { return m_meshes; }
+        inline std::vector<Mesh>& getMeshesWrite() { return m_meshes; }
         
     private:
         std::vector<Mesh> m_meshes;
@@ -39,9 +41,6 @@ class VEIL_EXPORT Model {
         void loadModel(const std::string& path);
         void processNode(aiNode* node, const aiScene* scene);
         Mesh processMesh(aiMesh* mesh, const aiScene* scene);
-
-        void saveToBINCache(const std::string& folderPath);
-        void loadFromBINCache(const std::string& filePath);
 }; //class Model
 
 }; //namespace veil

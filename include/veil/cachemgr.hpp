@@ -13,6 +13,8 @@ namespace veil {
 constexpr std::string g_cacheFile = "/cache.bin";
 constexpr std::string g_cacheDir  = "/.cache";
 
+class Model;
+
 class VEIL_EXPORT TextureStorage {
     public:
         TextureStorage() = default;
@@ -32,5 +34,20 @@ class VEIL_EXPORT TextureStorage {
 
         GLuint loadTextureFromFile(const std::string& path);
 }; //class TextureStorage
+
+class VEIL_EXPORT ModelStorage {
+    public:
+        ModelStorage() = default;
+        ModelStorage(const ModelStorage&) = delete;
+        ModelStorage& operator=(const ModelStorage&) = delete;
+        ModelStorage(ModelStorage&&) = delete;
+        ModelStorage& operator=(ModelStorage&&) = delete;
+        ~ModelStorage() = default;
+
+        static ModelStorage& getInstance();
+
+        void saveToBIN(const Model& model);
+        void loadFromBIN(Model& model);
+};
 
 }; //namespace veil
