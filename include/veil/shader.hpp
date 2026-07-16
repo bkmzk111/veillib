@@ -7,16 +7,18 @@
 #include <span>
 #include <fstream>
 #include <vector>
+#include <initializer_list>
 
 #include <glm/gtc/type_ptr.hpp>
 
 #include "assets.hpp"
+#include "logmgr.hpp"
 
 namespace veil {
 
 class VEIL_EXPORT Shader {
     public:
-        Shader(std::span<const std::string> files, std::span<const GLenum> types);
+        Shader(std::initializer_list<util::ShaderSourceStruct> sources);
         ~Shader();
 
         inline void useProgram() const { glUseProgram(m_shaderProgram); }

@@ -3,18 +3,19 @@
 
 #include <veil_export.h>
 
-#include <stdexcept>
 #include <string>
 #include <functional>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "logmgr.hpp"
+
 namespace veil {
 
 #define VEIL_INIT_OPENGL_DRV \
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) { \
-        throw std::runtime_error("VEIL::GLAD::CRITICAL Failed to initialize GLAD"); \
+        throw veil::Exception("Failed to initialize GLAD"); \
     }
 
 class VEIL_EXPORT Window {

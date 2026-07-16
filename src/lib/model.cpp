@@ -38,7 +38,7 @@ void Model::loadModel(const std::string& path) {
     );
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
-        throw std::runtime_error("VEIL::ASSIMP::CRITICAL " + std::string(importer.GetErrorString()));
+        throw veil::Exception(importer.GetErrorString());
 
     processNode(scene->mRootNode, scene);
 

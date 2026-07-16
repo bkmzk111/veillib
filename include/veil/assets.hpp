@@ -63,6 +63,10 @@ namespace util {
         unsigned int vertCount;
         unsigned int indCount;
     };
+    struct ShaderSourceStruct {
+        std::string filePath;
+        GLenum type;
+    };
 };
 
 }; //namespace veil

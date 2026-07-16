@@ -8,7 +8,7 @@ static std::string readFile(const std::string& filename) {
     std::ifstream file(filename, std::ios::in | std::ios::binary);
 
     if (!file.is_open())
-        throw std::runtime_error("VEIL::OPENGL::SHADER::CRITICAL Failed to read file: " + filename);
+        throw veil::Exception(std::format("Failed to read {}", filename));
     
     return std::string{
         std::istreambuf_iterator<char>(file),
@@ -16,30 +16,33 @@ static std::string readFile(const std::string& filename) {
     };
 }
 
-Shader::Shader(std::span<const std::string> files, std::span<const GLenum> types) {
+Shader::Shader(std::initializer_list<util::ShaderSourceStruct> sources) {
 
-    if (files.empty() || types.empty())
-        throw std::runtime_error("VEIL::OPENGL::SHADER::CRITICAL Failed to create an empty shader");
-    if (files.size() != types.size())
-        throw std::runtime_error("VEIL::OPENGL::SHADER::CRITICAL Failed to create a shader with no type/file");
+    if (sources.size() == 0)
+        throw veil::Exception("Failed to create an empty shader");
 
     m_shaderProgram = glCreateProgram();
 
     std::vector<GLuint> shaderIDs;
-    shaderIDs.reserve(files.size());
+    shaderIDs.reserve(sources.size());
 
     try {
-        std::vector<std::string> sources;
-        sources.reserve(files.size());
-        for (const auto& file : files)
-            sources.push_back(readFile(file));
+        std::vector<std::string> sourceFiles;
+        sourceFiles.reserve(sources.size());
+        std::vector<GLenum> sourceTypes;
+        sourceTypes.reserve(sources.size());
 
-        for (size_t i = 0; i < files.size(); ++i) {
+        for (const auto& source : sources) {
+            sourceFiles.push_back(readFile(source.filePath));
+            sourceTypes.push_back(source.type);
+        }
 
-            GLuint shader = glCreateShader(types[i]);
+        for (size_t i = 0; i < sources.size(); ++i) {
+
+            GLuint shader = glCreateShader(sourceTypes[i]);
             shaderIDs.push_back(shader);
 
-            const char* srcPtr = sources[i].c_str();
+            const char* srcPtr = sourceFiles[i].c_str();
             glShaderSource(shader, 1, &srcPtr, nullptr);
 
             glCompileShader(shader);
@@ -48,8 +51,8 @@ Shader::Shader(std::span<const std::string> files, std::span<const GLenum> types
             if (!success) {
                 GLchar infoLog[512];
                 glGetShaderInfoLog(shader, 512, nullptr, infoLog);
-                throw std::runtime_error(
-                    "VEIL::OPENGL::SHADER::CRITICAL Failed to compile shader: " + std::string(infoLog)
+                throw veil::Exception(
+                    std::format("Failed to compile shader: {}", infoLog)
                 );
             }
 
@@ -62,8 +65,8 @@ Shader::Shader(std::span<const std::string> files, std::span<const GLenum> types
         if (!success) {
             GLchar infoLog[512];
             glGetProgramInfoLog(m_shaderProgram, 512, nullptr, infoLog);
-            throw std::runtime_error(
-                "VEIL::OPENGL::SHADER::CRITICAL Failed to link program: " + std::string(infoLog)
+            throw veil::Exception(
+                std::format("Failed to link shader program: {}", infoLog)
             );
         }
     }

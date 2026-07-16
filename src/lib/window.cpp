@@ -8,7 +8,7 @@ Window::Window(const std::string& title, int width, int height) {
     m_loopFunc = nullptr;
 
     if (!glfwInit())
-        throw std::runtime_error("VEIL::GLFW::CRITICAL Failed to initialize GLFW");
+        throw veil::Exception("Failed to initialize GLFW");
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -17,7 +17,7 @@ Window::Window(const std::string& title, int width, int height) {
     m_window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
     if (!m_window) {
         glfwTerminate();
-        throw std::runtime_error("VEIL::GLFW::CRITICAL Failed to create GLFW window");
+        throw veil::Exception("Failed to create GLFW window");
     }
 
     glfwMakeContextCurrent(m_window);

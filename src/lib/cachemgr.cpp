@@ -52,7 +52,7 @@ GLuint TextureStorage::loadTextureFromFile(const std::string& path) {
     if (!data) {
 
         stbi_image_free(data);
-        throw std::runtime_error("VEIL::STBI::CRITICAL " + std::string("Failed to load data at ") + path);
+        throw veil::Exception(std::format("Failed to load texture data at {}", path));
         return 0;
     }
 
@@ -103,6 +103,8 @@ void ModelStorage::saveToBIN(const Model& model) {
     std::string cacheFile = localCacheDir + g_cacheFile;
 
     std::ofstream out(cacheFile, std::ios::binary);
+    if (!out.is_open())
+        throw veil::Exception(std::format("Unable to open {}", cacheFile));
 
     size_t totalBytes = sizeof(unsigned int);
 
@@ -163,6 +165,8 @@ void ModelStorage::loadFromBIN(Model& model) {
     std::string cacheFile = model.getDirectory() + g_cacheDir + g_cacheFile;
 
     std::ifstream in(cacheFile, std::ios::binary | std::ios::ate);
+    if (!in.is_open()) 
+        throw veil::Exception(std::format("Unable to open {}", cacheFile));
 
     std::streamsize fileSize = in.tellg();
     in.seekg(0, std::ios::beg);

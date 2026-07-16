@@ -4,9 +4,9 @@
 #include <veil_export.h>
 
 #include <unordered_map>
-#include <stdexcept>
 
 #include "assets.hpp"
+#include "logmgr.hpp"
 
 namespace veil {
 
