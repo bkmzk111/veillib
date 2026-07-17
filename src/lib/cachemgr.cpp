@@ -7,10 +7,6 @@
 
 namespace veil {
 
-TextureStorage::~TextureStorage() {
-    
-    shutdown(); //fallback
-}
 Texture TextureStorage::loadTexture(const std::string& path) {
 
     if (path.empty() || path == "\0")
@@ -92,6 +88,31 @@ ModelStorage& ModelStorage::getInstance() {
 
     static ModelStorage ms;
     return ms;
+}
+void ModelStorage::loadModel(const std::string& path) {
+
+    if (path.empty() || path == "\0")
+        return;
+    
+    auto it = m_cache.find(path);
+    if (it != m_cache.end())
+        return;
+    
+    m_cache.try_emplace(path, Model(path));
+}
+ModelInstance ModelStorage::getExisting(const std::string& path) {
+
+    auto it = m_cache.find(path);
+
+    if (it == m_cache.end())
+        throw veil::Exception(std::format("No existing model found '{}'", path));
+
+    return ModelInstance(it->second);
+}
+void ModelStorage::shutdown() {
+
+    auto& instance = getInstance();
+    instance.m_cache.clear();
 }
 void ModelStorage::saveToBIN(const Model& model) {
 

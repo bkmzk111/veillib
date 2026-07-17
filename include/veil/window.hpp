@@ -5,6 +5,8 @@
 
 #include <string>
 #include <functional>
+#include <chrono>
+#include <thread>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>

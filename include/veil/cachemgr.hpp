@@ -14,6 +14,7 @@ constexpr std::string g_cacheFile = "/cache.bin";
 constexpr std::string g_cacheDir  = "/.cache";
 
 class Model;
+class ModelInstance;
 
 class VEIL_EXPORT TextureStorage {
     public:
@@ -22,7 +23,7 @@ class VEIL_EXPORT TextureStorage {
         TextureStorage& operator=(const TextureStorage&) = delete;
         TextureStorage(TextureStorage&&) = delete;
         TextureStorage& operator=(TextureStorage&&) = delete;
-        ~TextureStorage(); 
+        ~TextureStorage() = default; 
 
         Texture loadTexture(const std::string& path);
         static void shutdown();
@@ -46,8 +47,15 @@ class VEIL_EXPORT ModelStorage {
 
         static ModelStorage& getInstance();
 
+        void loadModel(const std::string& path);
+        ModelInstance getExisting(const std::string& path);
+        static void shutdown();
+
         void saveToBIN(const Model& model);
         void loadFromBIN(Model& model);
-};
+
+    private:
+        std::unordered_map<std::string, Model> m_cache;
+}; //class ModelStorage
 
 }; //namespace veil

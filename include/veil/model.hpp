@@ -22,6 +22,7 @@ namespace veil {
 class VEIL_EXPORT Model {
     public:
         Model(const std::string& path);
+
         Model(const Model&) = delete;
         Model& operator=(const Model&) = delete;
         Model(Model&&) noexcept = default;
@@ -42,5 +43,25 @@ class VEIL_EXPORT Model {
         void processNode(aiNode* node, const aiScene* scene);
         Mesh processMesh(aiMesh* mesh, const aiScene* scene);
 }; //class Model
+
+class VEIL_EXPORT ModelInstance {
+    public:
+        ModelInstance(const Model& base);
+
+        ModelInstance(const ModelInstance&) = delete;
+        ModelInstance& operator=(const ModelInstance&) = delete;
+        ModelInstance(ModelInstance&&) noexcept = default;
+        ModelInstance& operator=(ModelInstance&&) noexcept = default;
+        ~ModelInstance() = default;
+
+        void render(Shader& shader) const;
+
+        inline const Model& getBase() const { return m_base; }
+        inline Matrix4 getModelMat() { return m_modelMatrix; }
+
+    private:
+        const Model& m_base;
+        Matrix4 m_modelMatrix;
+}; //class ModelInstance
 
 }; //namespace veil

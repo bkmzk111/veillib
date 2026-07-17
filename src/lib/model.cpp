@@ -3,8 +3,6 @@
 
 namespace veil {
 
-//TODO: Make model loading cache-based
-
 Model::Model(const std::string& path) {
 
     VEIL_START_LOG_TIMER_FOR(path)
@@ -115,6 +113,19 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
     }
 
     return Mesh(std::move(vertices), std::move(indices), material);
+}
+
+ModelInstance::ModelInstance(const Model& base) : m_base(base) {
+    
+    m_modelMatrix.mat = glm::mat4(1.0f);
+    //TEMP
+    m_modelMatrix.mat = glm::rotate(m_modelMatrix.mat, glm::radians(-90.0f), {1.0f, 0.0f, 0.0f});
+    m_modelMatrix.mat = glm::scale(m_modelMatrix.mat, {0.2f, 0.2f, 0.2f});
+}
+
+void ModelInstance::render(Shader& shader) const {
+
+    m_base.render(shader);
 }
 
 };
