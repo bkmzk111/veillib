@@ -3,7 +3,7 @@
 
 namespace veil {
 
-Model::Model(const std::string& path) {
+Model::Model(std::string_view path) {
 
     VEIL_START_LOG_TIMER_FOR(path)
 
@@ -23,11 +23,11 @@ void Model::render(Shader& shader) const {
         mesh.render(shader);
 }
 
-void Model::loadModel(const std::string& path) {
+void Model::loadModel(std::string_view path) {
 
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(
-        path, 
+        path.data(), 
         aiProcess_Triangulate | 
         aiProcess_FlipUVs | 
         aiProcess_GenNormals |

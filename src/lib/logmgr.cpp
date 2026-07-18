@@ -3,7 +3,7 @@
 
 namespace veil {
 
-LogTimer::LogTimer(const std::string& procName) {
+LogTimer::LogTimer(std::string_view procName) {
 
     m_procName = procName;
     m_startTimePoint = std::chrono::steady_clock::now();
@@ -18,8 +18,8 @@ LogTimer::~LogTimer() {
     std::cout << std::format("VEIL::INFO Process '{}' finished in {}", m_procName, elapsedTime) << std::endl;
 }
 
-Exception::Exception(const std::string& msg, std::source_location loc) 
-    : std::runtime_error(msg), m_location(loc) {
+Exception::Exception(std::string_view msg, std::source_location loc) 
+    : std::runtime_error(msg.data()), m_location(loc) {
     
     m_error_message = std::format("VEIL::ERROR {} in {}", msg, m_location.function_name());
 }

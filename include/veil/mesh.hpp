@@ -12,7 +12,7 @@ namespace veil {
 
 class VEIL_EXPORT Mesh {
     public:
-        Mesh(std::vector<Vertex>&& vertices, std::vector<unsigned int>&& indices, Material material);
+        Mesh(std::vector<Vertex>&& vertices, std::vector<unsigned int>&& indices, Material& material);
         Mesh(const Mesh&) = delete;
         Mesh& operator=(const Mesh&) = delete;
         Mesh(Mesh&& other) noexcept;
@@ -30,8 +30,6 @@ class VEIL_EXPORT Mesh {
         Material m_material;
 
         GLuint m_vao, m_vbo, m_ebo;
-        
-        void setup();
 }; //class Mesh
 
 }; //namespace veil

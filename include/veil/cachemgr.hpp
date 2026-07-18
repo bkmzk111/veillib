@@ -4,6 +4,7 @@
 #include <veil_export.h>
 
 #include <unordered_map>
+#include <string_view>
 
 #include "assets.hpp"
 #include "logmgr.hpp"
@@ -33,7 +34,7 @@ class VEIL_EXPORT TextureStorage {
     private:
         std::unordered_map<std::string, Texture> m_cache;
 
-        GLuint loadTextureFromFile(const std::string& path);
+        GLuint loadTextureFromFile(std::string_view path) const;
 }; //class TextureStorage
 
 class VEIL_EXPORT ModelStorage {
@@ -51,7 +52,7 @@ class VEIL_EXPORT ModelStorage {
         ModelInstance getExisting(const std::string& path);
         static void shutdown();
 
-        void saveToBIN(const Model& model);
+        void saveToBIN(const Model& model) const;
         void loadFromBIN(Model& model);
 
     private:

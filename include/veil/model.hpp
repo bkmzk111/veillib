@@ -21,7 +21,7 @@ namespace veil {
 
 class VEIL_EXPORT Model {
     public:
-        Model(const std::string& path);
+        explicit Model(std::string_view path);
 
         Model(const Model&) = delete;
         Model& operator=(const Model&) = delete;
@@ -31,7 +31,7 @@ class VEIL_EXPORT Model {
         
         void render(Shader& shader) const; 
 
-        inline const std::string& getDirectory() const { return m_directory; }
+        inline std::string_view getDirectory() const { return m_directory; }
         inline std::span<const Mesh> getMeshesRead() const { return m_meshes; }
         inline std::vector<Mesh>& getMeshesWrite() { return m_meshes; }
         
@@ -39,7 +39,7 @@ class VEIL_EXPORT Model {
         std::vector<Mesh> m_meshes;
         std::string m_directory;
 
-        void loadModel(const std::string& path);
+        void loadModel(std::string_view path);
         void processNode(aiNode* node, const aiScene* scene);
         Mesh processMesh(aiMesh* mesh, const aiScene* scene);
 }; //class Model

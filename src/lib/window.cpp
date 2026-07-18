@@ -3,7 +3,7 @@
 
 namespace veil {
 
-Window::Window(const std::string& title, int width, int height) {
+Window::Window(std::string_view title, int width, int height) {
 
     m_loopFunc = nullptr;
 
@@ -14,7 +14,7 @@ Window::Window(const std::string& title, int width, int height) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    m_window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
+    m_window = glfwCreateWindow(width, height, title.data(), nullptr, nullptr);
     if (!m_window) {
         glfwTerminate();
         throw veil::Exception("Failed to create GLFW window");
@@ -40,7 +40,7 @@ Window::~Window() {
     glfwTerminate();
 }
 
-void Window::setUpdateCallback(std::function<void()> loopFunc) {
+void Window::setUpdateCallback(const std::function<void()>& loopFunc) {
     m_loopFunc = loopFunc;
 }
 void Window::startUpdateLoop() const {

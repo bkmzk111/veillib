@@ -7,6 +7,7 @@
 #include <functional>
 #include <chrono>
 #include <thread>
+#include <string_view>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -22,7 +23,7 @@ namespace veil {
 
 class VEIL_EXPORT Window {
     public:
-        Window(const std::string& title, int width = 1280, int height = 720);
+        Window(std::string_view title, int width = 1280, int height = 720);
         Window(const Window&) = delete;
         Window& operator=(const Window&) = delete;
         Window(Window&&) = delete;
@@ -33,7 +34,7 @@ class VEIL_EXPORT Window {
         inline void pollEvents()  const { glfwPollEvents(); }
         inline void swapBuffers() const { glfwSwapBuffers(m_window); }
 
-        void setUpdateCallback(std::function<void()> loopFunc);
+        void setUpdateCallback(const std::function<void()>& loopFunc);
         void startUpdateLoop() const;
 
         inline void getSize(int& width, int& height) const { glfwGetFramebufferSize(m_window, &width, &height); };

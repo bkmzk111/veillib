@@ -64,6 +64,7 @@ namespace util {
         unsigned int indCount;
     };
     struct ShaderSourceStruct {
+        
         std::string filePath;
         GLenum type;
     };

@@ -3,23 +3,19 @@
 
 namespace veil {
 
-Mesh::Mesh(std::vector<Vertex>&& vertices, std::vector<unsigned int>&& indices, Material material) {
+Mesh::Mesh(std::vector<Vertex>&& vertices, std::vector<unsigned int>&& indices, Material& material) {
 
     m_vertices = std::move(vertices);
     m_indices = std::move(indices);
     m_material = material;
 
-    setup();
-}
-void Mesh::setup() {
-
     glCreateVertexArrays(1, &m_vao);
-
     glCreateBuffers(1, &m_vbo);
+    glCreateBuffers(1, &m_ebo);
+
     glNamedBufferStorage(m_vbo, m_vertices.size()*sizeof(Vertex), &m_vertices[0], 0);
     glVertexArrayVertexBuffer(m_vao, 0, m_vbo, 0, sizeof(Vertex));
 
-    glCreateBuffers(1, &m_ebo);
     glNamedBufferStorage(m_ebo, m_indices.size()*sizeof(unsigned int), &m_indices[0], 0);
     glVertexArrayElementBuffer(m_vao, m_ebo);
 

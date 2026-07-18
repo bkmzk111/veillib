@@ -38,12 +38,12 @@ TextureStorage& TextureStorage::getInstance() {
     static TextureStorage ts;
     return ts;
 }
-GLuint TextureStorage::loadTextureFromFile(const std::string& path) {
+GLuint TextureStorage::loadTextureFromFile(std::string_view path) const {
 
     stbi_set_flip_vertically_on_load(false);
 
     int width, height, channels;
-    unsigned char* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+    unsigned char* data = stbi_load(path.data(), &width, &height, &channels, 0);
 
     if (!data) {
 
@@ -114,11 +114,11 @@ void ModelStorage::shutdown() {
     auto& instance = getInstance();
     instance.m_cache.clear();
 }
-void ModelStorage::saveToBIN(const Model& model) {
+void ModelStorage::saveToBIN(const Model& model) const {
 
     const auto& meshes = model.getMeshesRead();
 
-    std::string localCacheDir = model.getDirectory() + g_cacheDir;
+    std::string localCacheDir = std::format("{}{}", model.getDirectory(), g_cacheDir);
     std::filesystem::create_directories(localCacheDir);
 
     std::string cacheFile = localCacheDir + g_cacheFile;
@@ -183,7 +183,7 @@ void ModelStorage::loadFromBIN(Model& model) {
 
     auto& meshes = model.getMeshesWrite();
 
-    std::string cacheFile = model.getDirectory() + g_cacheDir + g_cacheFile;
+    std::string cacheFile = std::format("{}{}{}", model.getDirectory(), g_cacheDir, g_cacheFile);
 
     std::ifstream in(cacheFile, std::ios::binary | std::ios::ate);
     if (!in.is_open()) 

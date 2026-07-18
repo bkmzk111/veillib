@@ -14,7 +14,7 @@ namespace veil {
 
 class VEIL_EXPORT LogTimer {
     public:
-        LogTimer(const std::string& procName);
+        LogTimer(std::string_view procName);
         ~LogTimer();
     private:
         std::string m_procName;
@@ -23,7 +23,7 @@ class VEIL_EXPORT LogTimer {
 
 class VEIL_EXPORT Exception : public std::runtime_error {
     public:
-        Exception(const std::string& msg, std::source_location loc = std::source_location::current());
+        Exception(std::string_view, std::source_location loc = std::source_location::current());
 
         const char* what() const noexcept override;
     private:
