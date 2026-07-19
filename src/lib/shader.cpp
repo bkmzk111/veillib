@@ -18,6 +18,8 @@ static std::string readFile(const std::string& filename) {
 
 Shader::Shader(std::initializer_list<util::ShaderSourceStruct> sources) {
 
+    LogTimer("shader");
+
     if (sources.size() == 0)
         throw veil::Exception("Failed to create an empty shader");
 

@@ -5,7 +5,7 @@ namespace veil {
 
 Model::Model(std::string_view path) {
 
-    VEIL_START_LOG_TIMER_FOR(path)
+    LogTimer lt(path);
 
     m_directory = std::filesystem::path(path).parent_path().string();
 

@@ -14,10 +14,11 @@ namespace veil {
 
 class VEIL_EXPORT LogTimer {
     public:
-        LogTimer(std::string_view procName);
+        LogTimer(std::string_view name, std::source_location loc = std::source_location::current());
         ~LogTimer();
     private:
-        std::string m_procName;
+        std::string m_name;
+        std::source_location m_location;
         std::chrono::steady_clock::time_point m_startTimePoint;
 };
 
@@ -30,7 +31,5 @@ class VEIL_EXPORT Exception : public std::runtime_error {
         std::string m_error_message;
         std::source_location m_location;
 };
-
-#define VEIL_START_LOG_TIMER_FOR(a) LogTimer lt##__LINE__(a);
 
 }; //namespace veil

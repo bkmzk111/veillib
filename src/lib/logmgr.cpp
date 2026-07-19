@@ -3,19 +3,21 @@
 
 namespace veil {
 
-LogTimer::LogTimer(std::string_view procName) {
+LogTimer::LogTimer(std::string_view name, std::source_location loc) {
 
-    m_procName = procName;
+    m_name = name;
+    m_location = loc;
     m_startTimePoint = std::chrono::steady_clock::now();
 
-    std::cout << std::format("VEIL::INFO Process '{}' started", m_procName) << std::endl;
+    std::cout << std::format("VEIL::INFO Process '{}' started at '{}'", 
+                             m_name, m_location.function_name()) << std::endl;
 }
 LogTimer::~LogTimer() {
 
     const std::chrono::steady_clock::time_point endTimePoint = std::chrono::steady_clock::now();
     const auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTimePoint - m_startTimePoint);
 
-    std::cout << std::format("VEIL::INFO Process '{}' finished in {}", m_procName, elapsedTime) << std::endl;
+    std::cout << std::format("VEIL::INFO Process '{}' finished in {}", m_name, elapsedTime) << std::endl;
 }
 
 Exception::Exception(std::string_view msg, std::source_location loc) 
