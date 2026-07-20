@@ -4,6 +4,7 @@
 #include <veil_export.h>
 
 #include <vector>
+#include <span>
 
 #include "assets.hpp"
 #include "shader.hpp"
