@@ -6,6 +6,7 @@
 #include <vector>
 #include <fstream>
 #include <filesystem>
+#include <span>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
