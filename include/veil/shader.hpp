@@ -23,7 +23,7 @@ class VEIL_EXPORT Shader {
 
         void setUniform(int location, float x, float y, float z);
         void setUniform(int location, float x, float y);
-        void setUniform(int location, glm::mat4 mat);
+        void setUniform(int location, const glm::mat4& mat);
         void setUniform(int location, const Vector3& vec);
         void setUniform(int location, const Vector2& vec);
         void setUniform(int location, const Matrix4& mat);
@@ -32,10 +32,6 @@ class VEIL_EXPORT Shader {
 
     private:
         GLuint m_shaderProgram;
-
-        void uniformVector3f(int location, float x, float y, float z);
-        void uniformVector2f(int location, float x, float y);
-        void uniformMatrix4f(int location, glm::mat4 mat);
 }; //class Shader
 
 }; //namespace veil

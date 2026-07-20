@@ -211,11 +211,11 @@ void ModelStorage::loadFromBIN(Model& model) {
 
     meshes.reserve(meshNum);
 
-    std::vector<Vertex> vertices;
-    std::vector<unsigned int> indices;
-    util::BINCacheHeader header;
-
     for (unsigned int i = 0; i < meshNum; ++i) {
+
+        std::vector<Vertex> vertices;
+        std::vector<unsigned int> indices;
+        util::BINCacheHeader header;
 
         std::memcpy(&header, bufferPtr, sizeof(header));
         bufferPtr += sizeof(header);

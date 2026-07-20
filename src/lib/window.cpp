@@ -21,6 +21,7 @@ Window::Window(std::string_view title, int width, int height) {
     }
 
     glfwMakeContextCurrent(m_window);
+    glfwSwapInterval(1);
 
     #ifdef WIN32
     VEIL_INIT_OPENGL_DRV // WIN32 glad needs this macro to run explicitely in the .dll code
@@ -28,8 +29,8 @@ Window::Window(std::string_view title, int width, int height) {
                          // THE CODE HAS NOT BEEN TESTED ON LINUX YET
     #endif 
 
-    glfwSetWindowAttrib(m_window, GLFW_RESIZABLE, GLFW_FALSE);
-    glfwSwapInterval(1);    
+    //TEMP
+    glfwSetWindowAttrib(m_window, GLFW_RESIZABLE, GLFW_FALSE);    
 }
 
 Window::~Window() {
@@ -45,7 +46,7 @@ void Window::setUpdateCallback(const std::function<void()>& loopFunc) {
     m_loopFunc = loopFunc;
 }
 
-void Window::startUpdateLoop() const {
+void Window::startUpdateLoop() {
 
     if (!m_loopFunc)
         return;
@@ -55,8 +56,9 @@ void Window::startUpdateLoop() const {
         this->pollEvents();
         m_loopFunc();
         this->swapBuffers();
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
 }
 
 float Window::getAspectRatio() const {

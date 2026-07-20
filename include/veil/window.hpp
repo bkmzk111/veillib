@@ -5,9 +5,9 @@
 
 #include <string>
 #include <functional>
+#include <string_view>
 #include <chrono>
 #include <thread>
-#include <string_view>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -33,10 +33,11 @@ class VEIL_EXPORT Window {
 
         inline bool shouldClose() const { return glfwWindowShouldClose(m_window); }
         inline void pollEvents()  const { glfwPollEvents(); }
+        inline void waitEvents() const { glfwWaitEvents(); }
         inline void swapBuffers() const { glfwSwapBuffers(m_window); }
 
         void setUpdateCallback(const std::function<void()>& loopFunc);
-        void startUpdateLoop() const;
+        void startUpdateLoop();
 
         inline void getSize(int& width, int& height) const { glfwGetFramebufferSize(m_window, &width, &height); };
         float getAspectRatio() const;
@@ -45,6 +46,7 @@ class VEIL_EXPORT Window {
     private:
         GLFWwindow* m_window;
         std::function<void()> m_loopFunc;
+
 }; //class Window
 
 }; //namespace veil

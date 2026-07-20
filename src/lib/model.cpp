@@ -47,7 +47,7 @@ void Model::processNode(aiNode* node, const aiScene* scene) {
 
     for (unsigned int i = 0; i < node->mNumMeshes; ++i) {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        m_meshes.push_back(processMesh(mesh, scene));
+        m_meshes.emplace_back(processMesh(mesh, scene));
     }
     for (unsigned int i = 0; i < node->mNumChildren; ++i)
         processNode(node->mChildren[i], scene);
@@ -119,8 +119,8 @@ ModelInstance::ModelInstance(const Model& base) : m_base(base) {
     
     m_modelMatrix.makeUnitMat();
     //TEMP
-    m_modelMatrix.rotateMat(-90.0f, Vector3({1.0f, 0.0f, 0.0f}));
-    m_modelMatrix.scaleMat(Vector3({0.2f, 0.2f, 0.2f}));
+    //m_modelMatrix.rotateMat(-90.0f, Vector3({1.0f, 0.0f, 0.0f}));
+    m_modelMatrix.scaleMat(Vector3({50.0f, 50.0f, 50.0f}));
 }
 
 void ModelInstance::render(Shader& shader) const {
@@ -128,4 +128,4 @@ void ModelInstance::render(Shader& shader) const {
     m_base.render(shader);
 }
 
-};
+}; //namespace veil

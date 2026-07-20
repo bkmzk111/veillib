@@ -93,32 +93,22 @@ Shader::~Shader() {
 }
 
 void Shader::setUniform(int location, float x, float y, float z) {
-    uniformVector3f(location, x, y, z);
-}
-void Shader::setUniform(int location, float x, float y) {
-    uniformVector2f(location, x, y);
-}
-void Shader::setUniform(int location, glm::mat4 mat) {
-    uniformMatrix4f(location, mat);
-}
-void Shader::setUniform(int location, const Vector3& vec) {
-    uniformVector3f(location, vec.data.x, vec.data.y, vec.data.z);
-}
-void Shader::setUniform(int location, const Vector2& vec) {
-    uniformVector2f(location, vec.data.x, vec.data.y);
-}
-void Shader::setUniform(int location, const Matrix4& mat) {
-    { uniformMatrix4f(location, mat); }
-}
-
-void Shader::uniformVector3f(int location, float x, float y, float z) {
     glProgramUniform3f(m_shaderProgram, location, x, y, z);
 }
-void Shader::uniformVector2f(int location, float x, float y) {
+void Shader::setUniform(int location, float x, float y) {
     glProgramUniform2f(m_shaderProgram, location, x, y);
 }
-void Shader::uniformMatrix4f(int location, glm::mat4 mat) {
+void Shader::setUniform(int location, const glm::mat4& mat) {
     glProgramUniformMatrix4fv(m_shaderProgram, location, 1, GL_FALSE, glm::value_ptr(mat));
+}
+void Shader::setUniform(int location, const Vector3& vec) {
+    glProgramUniform3f(m_shaderProgram, location, vec.data.x, vec.data.y, vec.data.z);
+}
+void Shader::setUniform(int location, const Vector2& vec) {
+    glProgramUniform2f(m_shaderProgram, location, vec.data.x, vec.data.y);
+}
+void Shader::setUniform(int location, const Matrix4& mat) {
+    glProgramUniformMatrix4fv(m_shaderProgram, location, 1, GL_FALSE, glm::value_ptr(mat.data));
 }
 
 } //namespace veil
