@@ -3,8 +3,6 @@
 
 #include <veil_export.h>
 
-#include <string>
-#include <span>
 #include <fstream>
 #include <vector>
 #include <initializer_list>
