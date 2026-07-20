@@ -20,7 +20,7 @@ class VEIL_EXPORT LogTimer {
         std::string m_name;
         std::source_location m_location;
         std::chrono::steady_clock::time_point m_startTimePoint;
-};
+}; //class LogTimer
 
 class VEIL_EXPORT Exception : public std::runtime_error {
     public:
@@ -30,6 +30,6 @@ class VEIL_EXPORT Exception : public std::runtime_error {
     private:
         std::string m_error_message;
         std::source_location m_location;
-};
+}; //class Exception
 
 }; //namespace veil

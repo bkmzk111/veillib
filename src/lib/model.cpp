@@ -67,21 +67,21 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
         Vertex vertex;
         Vector3 vector;
 
-        vector.vec.x = mesh->mVertices[i].x;
-        vector.vec.y = mesh->mVertices[i].y;
-        vector.vec.z = mesh->mVertices[i].z;
+        vector.data.x = mesh->mVertices[i].x;
+        vector.data.y = mesh->mVertices[i].y;
+        vector.data.z = mesh->mVertices[i].z;
         vertex.position = vector;
 
-        vector.vec.x = mesh->mNormals[i].x;
-        vector.vec.y = mesh->mNormals[i].y;
-        vector.vec.z = mesh->mNormals[i].z;
+        vector.data.x = mesh->mNormals[i].x;
+        vector.data.y = mesh->mNormals[i].y;
+        vector.data.z = mesh->mNormals[i].z;
         vertex.normal = vector;
 
         if (mesh->mTextureCoords[0]) {
 
             Vector2 uv;
-            uv.vec.x = mesh->mTextureCoords[0][i].x;
-            uv.vec.y = mesh->mTextureCoords[0][i].y;
+            uv.data.x = mesh->mTextureCoords[0][i].x;
+            uv.data.y = mesh->mTextureCoords[0][i].y;
             vertex.texuv = uv;
         }
         else 
@@ -117,10 +117,10 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 
 ModelInstance::ModelInstance(const Model& base) : m_base(base) {
     
-    m_modelMatrix.mat = glm::mat4(1.0f);
+    m_modelMatrix.makeUnitMat();
     //TEMP
-    m_modelMatrix.mat = glm::rotate(m_modelMatrix.mat, glm::radians(-90.0f), {1.0f, 0.0f, 0.0f});
-    m_modelMatrix.mat = glm::scale(m_modelMatrix.mat, {0.2f, 0.2f, 0.2f});
+    m_modelMatrix.rotateMat(-90.0f, Vector3({1.0f, 0.0f, 0.0f}));
+    m_modelMatrix.scaleMat(Vector3({0.2f, 0.2f, 0.2f}));
 }
 
 void ModelInstance::render(Shader& shader) const {

@@ -31,6 +31,7 @@ Window::Window(std::string_view title, int width, int height) {
     glfwSetWindowAttrib(m_window, GLFW_RESIZABLE, GLFW_FALSE);
     glfwSwapInterval(1);    
 }
+
 Window::~Window() {
     
     if (m_window) {
@@ -43,6 +44,7 @@ Window::~Window() {
 void Window::setUpdateCallback(const std::function<void()>& loopFunc) {
     m_loopFunc = loopFunc;
 }
+
 void Window::startUpdateLoop() const {
 
     if (!m_loopFunc)

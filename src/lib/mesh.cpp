@@ -31,6 +31,7 @@ Mesh::Mesh(std::vector<Vertex>&& vertices, std::vector<unsigned int>&& indices, 
     glVertexArrayAttribBinding(m_vao, 2, 0);
     glVertexArrayAttribFormat(m_vao, 2, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, texuv));
 }
+
 Mesh::Mesh(Mesh&& other) noexcept {
 
     m_vertices = std::move(other.m_vertices);
@@ -44,6 +45,7 @@ Mesh::Mesh(Mesh&& other) noexcept {
     other.m_vbo = 0;
     other.m_ebo = 0;
 }
+
 Mesh& Mesh::operator=(Mesh&& other) noexcept {
 
     if (this != &other) {
@@ -66,6 +68,7 @@ Mesh& Mesh::operator=(Mesh&& other) noexcept {
     }
     return *this;
 }
+
 Mesh::~Mesh() {
     
     if (m_vao) glDeleteVertexArrays(1, &m_vao);
@@ -82,4 +85,4 @@ void Mesh::render(Shader& shader) const {
     glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
 }
 
-};
+}; //namespace veil

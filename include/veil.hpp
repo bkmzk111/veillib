@@ -9,3 +9,6 @@
 #include "veil/model.hpp"
 #include "veil/cachemgr.hpp"
 #include "veil/logmgr.hpp"
+
+//TODO: Make renderer
+//TODO: Make shader optimizations 

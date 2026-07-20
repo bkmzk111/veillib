@@ -57,7 +57,7 @@ class VEIL_EXPORT ModelInstance {
         void render(Shader& shader) const;
 
         inline const Model& getBase() const { return m_base; }
-        inline Matrix4 getModelMat() { return m_modelMatrix; }
+        inline Matrix4& getModelMat() { return m_modelMatrix; }
 
     private:
         const Model& m_base;

@@ -101,6 +101,15 @@ void Shader::setUniform(int location, float x, float y) {
 void Shader::setUniform(int location, glm::mat4 mat) {
     uniformMatrix4f(location, mat);
 }
+void Shader::setUniform(int location, const Vector3& vec) {
+    uniformVector3f(location, vec.data.x, vec.data.y, vec.data.z);
+}
+void Shader::setUniform(int location, const Vector2& vec) {
+    uniformVector2f(location, vec.data.x, vec.data.y);
+}
+void Shader::setUniform(int location, const Matrix4& mat) {
+    { uniformMatrix4f(location, mat); }
+}
 
 void Shader::uniformVector3f(int location, float x, float y, float z) {
     glProgramUniform3f(m_shaderProgram, location, x, y, z);

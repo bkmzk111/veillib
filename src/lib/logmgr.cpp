@@ -12,6 +12,7 @@ LogTimer::LogTimer(std::string_view name, std::source_location loc) {
     std::cout << std::format("VEIL::INFO Process '{}' started at '{}'", 
                              m_name, m_location.function_name()) << std::endl;
 }
+
 LogTimer::~LogTimer() {
 
     const std::chrono::steady_clock::time_point endTimePoint = std::chrono::steady_clock::now();
@@ -25,8 +26,10 @@ Exception::Exception(std::string_view msg, std::source_location loc)
     
     m_error_message = std::format("VEIL::ERROR {} in {}", msg, m_location.function_name());
 }
+
 const char* Exception::what() const noexcept {
 
     return m_error_message.c_str();
 }
+
 } //namespace veil

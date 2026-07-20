@@ -26,15 +26,12 @@ class VEIL_EXPORT Shader {
         void setUniform(int location, float x, float y, float z);
         void setUniform(int location, float x, float y);
         void setUniform(int location, glm::mat4 mat);
-        
-        inline void setUniform(int location, c_vec3 auto const& vec) 
-            { uniformVector3f(location, vec.vec.x, vec.vec.y, vec.vec.z); }
-        inline void setUniform(int location, c_vec2 auto const& vec) 
-            { uniformVector2f(location, vec.vec.x, vec.vec.y); }
-        inline void setUniform(int location, c_mat4 auto const& mat) 
-            { uniformMatrix4f(location, mat); }
+        void setUniform(int location, const Vector3& vec);
+        void setUniform(int location, const Vector2& vec);
+        void setUniform(int location, const Matrix4& mat);
 
         inline GLuint getID() const { return m_shaderProgram; }
+
     private:
         GLuint m_shaderProgram;
 

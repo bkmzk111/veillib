@@ -20,6 +20,7 @@ namespace veil {
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) { \
         throw veil::Exception("Failed to initialize GLAD"); \
     }
+//VEIL_INIT_OPENGL_DRV
 
 class VEIL_EXPORT Window {
     public:

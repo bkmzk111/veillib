@@ -7,52 +7,91 @@
 #include <string>
 
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <glad/glad.h>
 
 namespace veil {
 
-struct VEIL_EXPORT Vector3 {
-    glm::vec3 vec = {0.0f, 0.0f, 0.0f};
-    operator glm::vec3() const { return vec; }
-};
-struct VEIL_EXPORT Vector2 {
-    glm::vec2 vec = {0.0f, 0.0f};
-    operator glm::vec2() const { return vec; }
-};
-struct VEIL_EXPORT Matrix4 {
-    glm::mat4 mat = glm::mat4(1.0f);
-    operator glm::mat4() const { return mat; }
-};
+template<typename T>
+concept isVector = std::same_as<T, glm::vec3> || std::same_as<T, glm::vec2>;
+template<typename T>
+concept isMatrix = std::same_as<T, glm::mat4>;
+
+template<typename T> requires isVector<T> || isMatrix<T>
+struct VEIL_EXPORT MathBaseType {
+
+    T data;
+
+    MathBaseType() = default;
+    MathBaseType(const T& v) : data(v) {}
+    MathBaseType(T&& v) : data(std::move(v)) {}
+
+    inline operator T() const { 
+        return data; 
+    }
+
+    inline MathBaseType<T> operator+(const MathBaseType<T>& other) const { 
+        return MathBaseType<T>(this->data + other.data); 
+    }
+    inline MathBaseType<T> operator-(const MathBaseType<T>& other) const {
+        return MathBaseType<T>(this->data - other.data);
+    }
+    inline MathBaseType<T> operator*(const MathBaseType<T>& other) const {
+        return MathBaseType<T>(this->data * other.data);
+    }
+    inline MathBaseType<T> operator/(const MathBaseType<T>& other) const requires isVector<T> {
+        return MathBaseType<T>(this->data / other.data);
+    }
+
+    inline void normalizeVec() requires isVector<T> {
+        data = glm::normalize(data);
+    }
+
+    inline void makeUnitMat(float k = 1.0f) requires isMatrix<T> {
+        data = glm::mat4(k);
+    }
+    inline void makeProjectionMat(float fovyDeg, float aspectRatio, float zNear, float zFar) requires isMatrix<T> {
+        data = glm::perspective(glm::radians(fovyDeg), aspectRatio, zNear, zFar);
+    }
+    inline void makeViewMat(const MathBaseType<glm::vec3>& eye, const MathBaseType<glm::vec3>& center, const MathBaseType<glm::vec3>& up) requires isMatrix<T> {      
+        data = glm::lookAt(eye.data, center.data, up.data);
+    }
+
+    inline void translateMat(const MathBaseType<glm::vec3>& translation) requires isMatrix<T> {
+        data = glm::translate(data, translation.data);
+    }
+    inline void rotateMat(float deg, const MathBaseType<glm::vec3>& dir) requires isMatrix<T> {
+        data = glm::rotate(data, glm::radians(deg), dir.data);
+    }
+    inline void scaleMat(const MathBaseType<glm::vec3>& k) requires isMatrix<T> {
+        data = glm::scale(data, k.data);
+    }
+
+}; //struct MathBaseType
+
+using Vector3 = MathBaseType<glm::vec3>;
+using Vector2 = MathBaseType<glm::vec2>;
+using Matrix4 = MathBaseType<glm::mat4>;
 
 struct VEIL_EXPORT Vertex {
     Vector3 position;
     Vector3 normal;
     Vector2 texuv;
-};
+
+}; //struct Vertex
+
 struct VEIL_EXPORT Texture {
     GLuint id = 0u;
     std::string path = "\0";
-};
+
+}; //struct Texture
+
 struct VEIL_EXPORT Material {
     Texture diffuse;
     Texture specular;
-};
 
-template<typename T>
-concept c_vec3 = requires(T v) {
-    {v.vec.x} -> std::convertible_to<float>;
-    {v.vec.y} -> std::convertible_to<float>;
-    {v.vec.z} -> std::convertible_to<float>;
-};
-template<typename T>
-concept c_vec2 = requires(T v) {
-    {v.vec.x} -> std::convertible_to<float>;
-    {v.vec.y} -> std::convertible_to<float>;
-};
-template<typename T>
-concept c_mat4 = requires(T m) {
-    {m.mat} -> std::convertible_to<glm::mat4>;
-};
+}; //struct Material
 
 namespace util {
 
@@ -62,12 +101,15 @@ namespace util {
         unsigned int specLen;
         unsigned int vertCount;
         unsigned int indCount;
-    };
+
+    }; //struct BINCacheHeader
+
     struct ShaderSourceStruct {
-        
         std::string filePath;
         GLenum type;
-    };
-};
+
+    }; //struct ShaderSourceStruct
+
+}; //namespace util
 
 }; //namespace veil

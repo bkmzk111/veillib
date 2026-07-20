@@ -22,7 +22,8 @@ Texture TextureStorage::loadTexture(const std::string& path) {
     m_cache[path] = texture;
 
     return texture;
-}
+} 
+
 void TextureStorage::shutdown() {
 
     auto& instance = getInstance();
@@ -32,12 +33,14 @@ void TextureStorage::shutdown() {
         }
     }
     instance.m_cache.clear();
-}
+} 
+
 TextureStorage& TextureStorage::getInstance() {
 
     static TextureStorage ts;
     return ts;
-}
+} 
+
 GLuint TextureStorage::loadTextureFromFile(std::string_view path) const {
 
     stbi_set_flip_vertically_on_load(false);
@@ -88,7 +91,8 @@ ModelStorage& ModelStorage::getInstance() {
 
     static ModelStorage ms;
     return ms;
-}
+} 
+
 void ModelStorage::loadModel(const std::string& path) {
 
     if (path.empty() || path == "\0")
@@ -99,7 +103,8 @@ void ModelStorage::loadModel(const std::string& path) {
         return;
     
     m_cache.try_emplace(path, Model(path));
-}
+} 
+
 ModelInstance ModelStorage::getExisting(const std::string& path) {
 
     auto it = m_cache.find(path);
@@ -109,11 +114,13 @@ ModelInstance ModelStorage::getExisting(const std::string& path) {
 
     return ModelInstance(it->second);
 }
+
 void ModelStorage::shutdown() {
 
     auto& instance = getInstance();
     instance.m_cache.clear();
 }
+
 void ModelStorage::saveToBIN(const Model& model) const {
 
     const auto& meshes = model.getMeshesRead();
@@ -179,6 +186,7 @@ void ModelStorage::saveToBIN(const Model& model) const {
 
     out.write(fileBuffer.data(), totalBytes);
 }
+
 void ModelStorage::loadFromBIN(Model& model) {
 
     auto& meshes = model.getMeshesWrite();
