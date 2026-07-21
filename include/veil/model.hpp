@@ -23,7 +23,6 @@ namespace veil {
 class VEIL_EXPORT Model {
     public:
         explicit Model(std::string_view path);
-
         Model(const Model&) = delete;
         Model& operator=(const Model&) = delete;
         Model(Model&&) noexcept = default;

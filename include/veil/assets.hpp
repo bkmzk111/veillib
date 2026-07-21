@@ -13,6 +13,8 @@
 
 namespace veil {
 
+class ModelInstance;
+
 template<typename T>
 concept isVector = std::same_as<T, glm::vec3> || std::same_as<T, glm::vec2>;
 template<typename T>
@@ -109,6 +111,12 @@ namespace util {
         GLenum type;
 
     }; //struct ShaderSourceStruct
+
+    struct RenderTarget {
+
+        const ModelInstance& modelInst;
+        const Shader& shader;
+    }; //struct RenderDataStruct
 
 }; //namespace util
 
