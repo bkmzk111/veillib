@@ -31,6 +31,7 @@ add_library(veil SHARED
     src/lib/model.cpp
     src/lib/cachemgr.cpp
     src/lib/logmgr.cpp
+    src/lib/glrenderer.cpp
 )
 add_executable(main #WIN32 
     src/app/main.cpp

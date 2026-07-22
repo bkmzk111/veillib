@@ -5,6 +5,7 @@
 
 #include <concepts>
 #include <string>
+#include <functional>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -14,6 +15,8 @@
 namespace veil {
 
 class ModelInstance;
+class Shader;
+enum class uniformTypes;
 
 template<typename T>
 concept isVector = std::same_as<T, glm::vec3> || std::same_as<T, glm::vec2>;
@@ -113,9 +116,9 @@ namespace util {
     }; //struct ShaderSourceStruct
 
     struct RenderTarget {
-
+        Shader& shader;
         const ModelInstance& modelInst;
-        const Shader& shader;
+
     }; //struct RenderDataStruct
 
 }; //namespace util

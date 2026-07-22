@@ -6,10 +6,12 @@
 #include <unordered_map>
 #include <vector>
 #include <initializer_list>
+#include <functional>
 
 #include "model.hpp"
 #include "shader.hpp"
 #include "assets.hpp"
+#include "glcamera.hpp"
 
 #include <glad/glad.h>
 
@@ -23,7 +25,6 @@ namespace veil {
 class VEIL_EXPORT GLRenderer {
     public:
         GLRenderer() = default;
-        inline explicit GLRenderer(std::initializer_list<util::RenderTarget> targets) { addTargets(targets); };
 
         GLRenderer(const GLRenderer&) = delete;
         GLRenderer& operator=(const GLRenderer&) = delete;
@@ -32,13 +33,27 @@ class VEIL_EXPORT GLRenderer {
 
         ~GLRenderer() = default;
 
-        void addTargets(std::initializer_list<util::RenderTarget> targets);
+        void setTargets(std::initializer_list<util::RenderTarget> targets);
 
-        void callbackTick();
+        template<typename T>
+        inline void uploadUniform(Shader& shader, GLint location, T&& getter) {
+
+            m_uniformData[&shader].push_back({
+                location, 
+                [getter = std::forward<T>(getter)](Shader& shader, GLint location) {
+                    shader.setUniform(location, getter());
+                }
+            });
+        }
+
+        void callbackUniforms() const;
+        void callbackRender() const;
+
+        inline const auto& getRenderData() const { return m_renderData; }
 
     private:
-        std::unordered_map<const ModelInstance&, std::vector<const Shader&>> m_renderData;
-
+        std::unordered_map<Shader*, std::vector<const ModelInstance*> > m_renderData;
+        std::unordered_map<Shader*, std::vector<std::pair<GLint, std::function<void(Shader&, GLint)> >> > m_uniformData;
 }; //class GLRenderer
 
 }; //namespace veil

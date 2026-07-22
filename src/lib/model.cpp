@@ -17,7 +17,7 @@ Model::Model(std::string_view path) {
         loadModel(path);
 }
 
-void Model::render(Shader& shader) const {
+void Model::render(const Shader& shader) const {
 
     for (const auto& mesh : m_meshes) 
         mesh.render(shader);
@@ -123,7 +123,7 @@ ModelInstance::ModelInstance(const Model& base) : m_base(base) {
     m_modelMatrix.scaleMat(Vector3({50.0f, 50.0f, 50.0f}));
 }
 
-void ModelInstance::render(Shader& shader) const {
+void ModelInstance::render(const Shader& shader) const {
 
     m_base.render(shader);
 }

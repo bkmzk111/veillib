@@ -13,6 +13,8 @@ GLCamera::GLCamera(const Vector2& size, const Vector3& initPos, const Vector3& u
 
     m_callbackData.lastx = size.data.x / 2.0f;
     m_callbackData.lasty = size.data.y / 2.0f;
+
+    updateView();
 }
 
 void GLCamera::calculateAttitude(double xpos, double ypos) {
@@ -33,6 +35,8 @@ void GLCamera::calculateAttitude(double xpos, double ypos) {
 
     m_callbackData.lastx = xpos;
     m_callbackData.lasty = ypos;
+
+    updateView();
 }
 
 void GLCamera::updateView() {

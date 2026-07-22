@@ -20,7 +20,7 @@ class VEIL_EXPORT Mesh {
         Mesh& operator=(Mesh&& other) noexcept;
         ~Mesh();
         
-        void render(Shader& shader) const;
+        void render(const Shader& shader) const;
 
         inline const std::span<const Vertex> getVertices() const { return m_vertices; }
         inline const std::span<const unsigned int> getIndices() const { return m_indices; }

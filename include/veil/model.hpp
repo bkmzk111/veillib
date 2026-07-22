@@ -29,7 +29,7 @@ class VEIL_EXPORT Model {
         Model& operator=(Model&&) noexcept = default;
         ~Model() = default;
         
-        void render(Shader& shader) const; 
+        void render(const Shader& shader) const; 
 
         inline std::string_view getDirectory() const { return m_directory; }
         inline std::span<const Mesh> getMeshesRead() const { return m_meshes; }
@@ -54,10 +54,10 @@ class VEIL_EXPORT ModelInstance {
         ModelInstance& operator=(ModelInstance&&) noexcept = default;
         ~ModelInstance() = default;
 
-        void render(Shader& shader) const;
+        void render(const Shader& shader) const;
 
         inline const Model& getBase() const { return m_base; }
-        inline Matrix4& getModelMat() { return m_modelMatrix; }
+        inline const Matrix4& getModelMat() const { return m_modelMatrix; }
 
     private:
         const Model& m_base;

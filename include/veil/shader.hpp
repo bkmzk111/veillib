@@ -17,6 +17,12 @@ namespace veil {
 class VEIL_EXPORT Shader {
     public:
         explicit Shader(std::initializer_list<util::ShaderSourceStruct> sources);
+
+        Shader(const Shader&) = delete;
+        Shader& operator=(const Shader&) = delete;
+        Shader(Shader&&) noexcept = default;
+        Shader& operator=(Shader&&) noexcept = default;
+
         ~Shader();
 
         inline void useProgram() const { glUseProgram(m_shaderProgram); }
