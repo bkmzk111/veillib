@@ -56,9 +56,9 @@ void Window::startUpdateLoop() {
         this->pollEvents();
         m_loopFunc();
         this->swapBuffers();
-    }
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
 }
 
 float Window::getAspectRatio() const {

@@ -4,9 +4,7 @@
 #include <veil_export.h>
 
 #include <fstream>
-#include <vector>
 #include <initializer_list>
-
 #include <glm/gtc/type_ptr.hpp>
 
 #include "assets.hpp"

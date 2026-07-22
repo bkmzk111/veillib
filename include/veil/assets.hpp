@@ -4,7 +4,6 @@
 #include <veil_export.h>
 
 #include <string>
-
 #include <glad/glad.h>
 
 #include "math.hpp"

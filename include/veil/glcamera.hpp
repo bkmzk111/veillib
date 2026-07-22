@@ -5,10 +5,8 @@
 
 #include <functional>
 #include <algorithm>
-
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "assets.hpp"
 #include "window.hpp"
 #include "math.hpp"
 

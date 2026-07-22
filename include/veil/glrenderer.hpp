@@ -7,20 +7,18 @@
 #include <vector>
 #include <initializer_list>
 #include <functional>
+#include <glad/glad.h>
 
 #include "model.hpp"
 #include "shader.hpp"
 #include "assets.hpp"
-#include "glcamera.hpp"
-
-#include <glad/glad.h>
 
 namespace veil {
 
 #define VEIL_INIT_OPENGL_RENDER_FLAGS \
     glEnable(GL_DEPTH_TEST); \
     glEnable(GL_CULL_FACE); 
-//VEIL_INIT_RENDER_FLAGS
+//VEIL_INIT_OPENGL_RENDER_FLAGS
 
 class VEIL_EXPORT GLRenderer {
     public:
