@@ -16,7 +16,7 @@ static std::string readFile(const std::string& filename) {
     };
 }
 
-Shader::Shader(std::initializer_list<util::ShaderSourceStruct> sources) {
+Shader::Shader(std::initializer_list<std::pair<std::string_view, GLenum>> sources) {
 
     LogTimer("shader");
 
@@ -35,8 +35,8 @@ Shader::Shader(std::initializer_list<util::ShaderSourceStruct> sources) {
         sourceTypes.reserve(sources.size());
 
         for (const auto& source : sources) {
-            sourceFiles.push_back(readFile(source.filePath));
-            sourceTypes.push_back(source.type);
+            sourceFiles.push_back(readFile(static_cast<std::string>(source.first)));
+            sourceTypes.push_back(source.second);
         }
 
         for (size_t i = 0; i < sources.size(); ++i) {
@@ -88,26 +88,44 @@ Shader::Shader(std::initializer_list<util::ShaderSourceStruct> sources) {
         glDeleteShader(shader);
     }
 }
+Shader::Shader(Shader&& other) noexcept {
+
+    m_shaderProgram = other.m_shaderProgram;
+    other.m_shaderProgram = 0;
+}
+Shader& Shader::operator=(Shader&& other) noexcept {
+
+    if (this != &other) {
+
+        glDeleteProgram(other.m_shaderProgram);
+
+        m_shaderProgram = other.m_shaderProgram;
+
+        other.m_shaderProgram = 0;
+    }
+    return *this;
+}
 Shader::~Shader() {
+
     glDeleteProgram(m_shaderProgram);
 }
 
-void Shader::setUniform(int location, float x, float y, float z) {
+void Shader::setUniform(int location, float x, float y, float z) const {
     glProgramUniform3f(m_shaderProgram, location, x, y, z);
 }
-void Shader::setUniform(int location, float x, float y) {
+void Shader::setUniform(int location, float x, float y) const {
     glProgramUniform2f(m_shaderProgram, location, x, y);
 }
-void Shader::setUniform(int location, const glm::mat4& mat) {
+void Shader::setUniform(int location, const glm::mat4& mat) const {
     glProgramUniformMatrix4fv(m_shaderProgram, location, 1, GL_FALSE, glm::value_ptr(mat));
 }
-void Shader::setUniform(int location, const Vector3& vec) {
+void Shader::setUniform(int location, const Vector3& vec) const {
     glProgramUniform3f(m_shaderProgram, location, vec.data.x, vec.data.y, vec.data.z);
 }
-void Shader::setUniform(int location, const Vector2& vec) {
+void Shader::setUniform(int location, const Vector2& vec) const {
     glProgramUniform2f(m_shaderProgram, location, vec.data.x, vec.data.y);
 }
-void Shader::setUniform(int location, const Matrix4& mat) {
+void Shader::setUniform(int location, const Matrix4& mat) const {
     glProgramUniformMatrix4fv(m_shaderProgram, location, 1, GL_FALSE, glm::value_ptr(mat.data));
 }
 

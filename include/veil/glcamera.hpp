@@ -10,6 +10,7 @@
 
 #include "assets.hpp"
 #include "window.hpp"
+#include "math.hpp"
 
 namespace veil {
 
@@ -47,6 +48,7 @@ class VEIL_EXPORT GLCamera {
             double lasty;
 
             bool firstMovement = true;
+
         } m_callbackData;
 
         std::function<void(double, double)> m_mouseFunc;

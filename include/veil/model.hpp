@@ -17,6 +17,7 @@
 #include "mesh.hpp"
 #include "cachemgr.hpp"
 #include "logmgr.hpp"
+#include "math.hpp"
 
 namespace veil {
 

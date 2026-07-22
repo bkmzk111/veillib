@@ -105,7 +105,7 @@ void ModelStorage::loadModel(const std::string& path) {
     m_cache.try_emplace(path, Model(path));
 } 
 
-ModelInstance ModelStorage::getExisting(const std::string& path) {
+ModelInstance ModelStorage::getExisting(const std::string& path) const {
 
     auto it = m_cache.find(path);
 

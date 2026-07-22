@@ -33,17 +33,25 @@ class VEIL_EXPORT GLRenderer {
 
         ~GLRenderer() = default;
 
-        void setTargets(std::initializer_list<util::RenderTarget> targets);
+        void setTargets(std::initializer_list<std::pair<const Shader&, const ModelInstance&>> targets);
 
         template<typename T>
-        inline void uploadUniform(Shader& shader, GLint location, T&& getter) {
+        inline void uploadUniform(const Shader& shader, GLint location, T&& v) {
 
-            m_uniformData[&shader].push_back({
-                location, 
-                [getter = std::forward<T>(getter)](Shader& shader, GLint location) {
-                    shader.setUniform(location, getter());
-                }
-            });
+            if constexpr (std::is_invocable_v<std::decay_t<T>>)
+                m_uniformData[&shader].push_back({
+                    location, 
+                    [getter = std::forward<T>(v)](const Shader& shader, GLint location) {
+                        shader.setUniform(location, getter());
+                    }
+                });
+            else 
+                m_uniformData[&shader].push_back({
+                    location,
+                    [value = std::forward<T>(v)](const Shader& shader, GLint location) {
+                        shader.setUniform(location, value);
+                    }
+                });
         }
 
         void callbackUniforms() const;
@@ -52,8 +60,17 @@ class VEIL_EXPORT GLRenderer {
         inline const auto& getRenderData() const { return m_renderData; }
 
     private:
-        std::unordered_map<Shader*, std::vector<const ModelInstance*> > m_renderData;
-        std::unordered_map<Shader*, std::vector<std::pair<GLint, std::function<void(Shader&, GLint)> >> > m_uniformData;
+        std::unordered_map<
+            const Shader*, 
+            std::vector<const ModelInstance*> 
+
+        > m_renderData;
+
+        std::unordered_map<
+            const Shader*, 
+            std::vector<std::pair<GLint, std::function<void(const Shader&, GLint)>>>
+
+        > m_uniformData;
 }; //class GLRenderer
 
 }; //namespace veil
