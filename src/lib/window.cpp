@@ -30,6 +30,8 @@ Window::Window(std::string_view title, int width, int height) {
                          // or else glad function pointers will be 0x0
                          // THE CODE HAS NOT BEEN TESTED ON LINUX YET
     #endif 
+
+    glViewport(0, 0, width, height);
 }
 
 Window::~Window() {

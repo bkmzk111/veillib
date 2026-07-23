@@ -30,7 +30,7 @@ void Model::loadModel(std::string_view path) {
         path.data(), 
         aiProcess_Triangulate | 
         aiProcess_FlipUVs | 
-        aiProcess_GenNormals |
+        aiProcess_GenSmoothNormals |
         aiProcess_JoinIdenticalVertices |
         aiProcess_ImproveCacheLocality
     );
