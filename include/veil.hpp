@@ -12,5 +12,4 @@
 #include "veil/glrenderer.hpp"
 #include "veil/math.hpp"
 
-//TODO: Make renderer
 //TODO: Make shader optimizations 

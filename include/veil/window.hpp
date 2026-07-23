@@ -31,10 +31,12 @@ class VEIL_EXPORT Window {
 
         inline bool shouldClose() const { return glfwWindowShouldClose(m_window); }
         inline void pollEvents()  const { glfwPollEvents(); }
-        inline void waitEvents() const { glfwWaitEvents(); }
+        inline void waitEvents()  const { glfwWaitEvents(); }
         inline void swapBuffers() const { glfwSwapBuffers(m_window); }
 
         void setUpdateCallback(const std::function<void()>& loopFunc);
+        void setMouseCallback(std::function<void(double, double)> mouseFunc);
+
         void startUpdateLoop();
 
         inline void getSize(int& width, int& height) const { glfwGetFramebufferSize(m_window, &width, &height); };
@@ -44,6 +46,9 @@ class VEIL_EXPORT Window {
     private:
         GLFWwindow* m_window;
         std::function<void()> m_loopFunc;
+        std::function<void(double, double)> m_mouseFunc;
+
+        static void mouseCallback(GLFWwindow* window, double xpos, double ypos);
 
 }; //class Window
 

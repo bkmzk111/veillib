@@ -21,16 +21,15 @@ Window::Window(std::string_view title, int width, int height) {
     }
 
     glfwMakeContextCurrent(m_window);
+    glfwSetWindowUserPointer(m_window, this);
+
     glfwSwapInterval(1);
 
-    #ifdef WIN32
+    #ifdef _WIN32
     VEIL_INIT_OPENGL_DRV // WIN32 glad needs this macro to run explicitely in the .dll code
                          // or else glad function pointers will be 0x0
                          // THE CODE HAS NOT BEEN TESTED ON LINUX YET
     #endif 
-
-    //TEMP
-    glfwSetWindowAttrib(m_window, GLFW_RESIZABLE, GLFW_FALSE);    
 }
 
 Window::~Window() {
@@ -43,7 +42,14 @@ Window::~Window() {
 }
 
 void Window::setUpdateCallback(const std::function<void()>& loopFunc) {
+
     m_loopFunc = loopFunc;
+}
+
+void Window::setMouseCallback(std::function<void(double, double)> mouseFunc) {
+
+    m_mouseFunc = mouseFunc;
+    glfwSetCursorPosCallback(m_window, &Window::mouseCallback);
 }
 
 void Window::startUpdateLoop() {
@@ -66,6 +72,14 @@ float Window::getAspectRatio() const {
     int w, h;
     getSize(w, h);
     return (h > 0) ? static_cast<float>(w) / h : 1.0f;
+}
+
+void Window::mouseCallback(GLFWwindow* window, double xpos, double ypos) {
+
+    const Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
+
+    if (win && win->m_mouseFunc)
+        win->m_mouseFunc(xpos, ypos);
 }
 
 }; //namespace veil
