@@ -15,6 +15,8 @@
 
 namespace veil {
 
+struct GLCamera;
+
 #define VEIL_INIT_OPENGL_DRV \
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) \
         throw veil::Exception("Failed to initialize GLAD"); 
@@ -34,8 +36,9 @@ class VEIL_EXPORT Window {
         inline void waitEvents()  const { glfwWaitEvents(); }
         inline void swapBuffers() const { glfwSwapBuffers(m_window); }
 
-        void setUpdateCallback(const std::function<void()>& loopFunc);
-        void setMouseCallback(std::function<void(double, double)> mouseFunc);
+        void setUpdateCallback(std::function<void()>&& loopFunc);
+        void setMouseCallback(std::function<void(double, double)>&& mouseFunc);
+        void setFramebufferCallback(std::function<void()>&& framebufferFunc);
 
         void startUpdateLoop();
 
@@ -45,10 +48,13 @@ class VEIL_EXPORT Window {
 
     private:
         GLFWwindow* m_window;
+
         std::function<void()> m_loopFunc;
         std::function<void(double, double)> m_mouseFunc;
+        std::function<void()> m_framebufferFunc;
 
         static void mouseCallback(GLFWwindow* window, double xpos, double ypos);
+        static void framebufferCallback(GLFWwindow* window, int width, int height);
 
 }; //class Window
 

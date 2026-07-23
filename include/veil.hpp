@@ -13,3 +13,9 @@
 #include "veil/math.hpp"
 
 //TODO: Make shader optimizations 
+//TODO: Remove window.aspectratio
+//TODO: Uniforms by name
+//TODO: Improve math
+//TODO: Camera class or struct?
+//TODO: Maybe remove hacky macros
+//TODO: loadModel returns the instance itself

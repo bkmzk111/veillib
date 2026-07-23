@@ -43,15 +43,21 @@ Window::~Window() {
     glfwTerminate();
 }
 
-void Window::setUpdateCallback(const std::function<void()>& loopFunc) {
+void Window::setUpdateCallback(std::function<void()>&& loopFunc) {
 
-    m_loopFunc = loopFunc;
+    m_loopFunc = std::move(loopFunc);
 }
 
-void Window::setMouseCallback(std::function<void(double, double)> mouseFunc) {
+void Window::setMouseCallback(std::function<void(double, double)>&& mouseFunc) {
 
-    m_mouseFunc = mouseFunc;
+    m_mouseFunc = std::move(mouseFunc);
     glfwSetCursorPosCallback(m_window, &Window::mouseCallback);
+}
+
+void Window::setFramebufferCallback(std::function<void()>&& framebufferFunc) {
+
+    m_framebufferFunc = std::move(framebufferFunc);
+    glfwSetFramebufferSizeCallback(m_window, &Window::framebufferCallback);
 }
 
 void Window::startUpdateLoop() {
@@ -82,6 +88,16 @@ void Window::mouseCallback(GLFWwindow* window, double xpos, double ypos) {
 
     if (win && win->m_mouseFunc)
         win->m_mouseFunc(xpos, ypos);
+}
+
+void Window::framebufferCallback(GLFWwindow* window, int width, int height) {
+
+    const Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
+
+    glViewport(0, 0, width, height);
+
+    if (win && win->m_framebufferFunc)
+        win->m_framebufferFunc();
 }
 
 }; //namespace veil

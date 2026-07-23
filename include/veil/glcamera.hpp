@@ -19,16 +19,17 @@ struct VEIL_EXPORT GLCamera {
 
     void calculateAttitude(double xpos, double ypos);
     void updateView();
+    void updateProjection(float fovyDeg, float aspectRatio);
 
     Vector3 m_position;
     Vector3 m_up;
     Matrix4 m_projection;
     Matrix4 m_view;
 
-    float yaw = -90.0f;
-    float pitch = 0.0f;
-    double lastx;
-    double lasty;
+    float m_yaw = -90.0f;
+    float m_pitch = 0.0f;
+    double m_lastx;
+    double m_lasty;
 
     bool firstMovement = true;
 
